@@ -15,7 +15,7 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover align-middle" id="targetsTable">
+                <table class="table table-hover align-middle table-theme-overview" id="targetsTable">
                     <thead>
                         <tr>
                             <th style="width: 80px;">ID</th>

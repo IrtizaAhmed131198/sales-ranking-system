@@ -44,8 +44,8 @@
                                 {{ $topPerformer ? $topPerformer->name : 'N/A' }}
                             </h4>
                         </div>
-                        <div class="bg-success bg-opacity-20 text-success p-2 rounded-3">
-                            <i class="fa-solid fa-trophy fs-4"></i>
+                        <div class="bg-success bg-opacity-20 text-success p-2 rounded-3 card-box">
+                            <img src="{{('assets/img/top-performer.png')}}" class="img-fluid">
                         </div>
                     </div>
                     @if($topPerformer)
@@ -81,8 +81,8 @@
                                 {{ $lowestPerformer ? $lowestPerformer->name : 'N/A' }}
                             </h4>
                         </div>
-                        <div class="bg-danger bg-opacity-20 text-danger p-2 rounded-3">
-                            <i class="fa-solid fa-triangle-exclamation fs-4"></i>
+                        <div class="bg-danger bg-opacity-20 text-danger p-2 rounded-3  card-box">
+                          <img src="{{('assets/img/low-performer.png')}}" class="img-fluid">
                         </div>
                     </div>
                     @if($lowestPerformer)
@@ -109,7 +109,7 @@
 
         <!-- Total Monthly Sales -->
         <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-start border-indigo border-4" style="border-left-color: var(--accent-primary) !important;">
+            <div class="card h-100 border-start border-indigo border-4" style="border-color: var(--accent-primary) !important;">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
@@ -143,8 +143,8 @@
                             <span class="text-secondary small fw-medium text-uppercase">Avg. Achieved</span>
                             <h3 class="fw-bold mt-1 text-warning">{{ $averagePerformance }}%</h3>
                         </div>
-                        <div class="bg-warning bg-opacity-20 text-warning p-2 rounded-3">
-                            <i class="fa-solid fa-percent fs-4"></i>
+                        <div class="bg-warning bg-opacity-20 text-warning p-2 rounded-3 card-box">
+                             <img src="{{('assets/img/avg-achive.png')}}" class="img-fluid">
                         </div>
                     </div>
                     <div class="progress mb-2 bg-dark" style="height: 6px;">

@@ -1,0 +1,93 @@
+
+.card-box img {
+    width: 90%;
+    object-fit: cover;
+}
+
+.card-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+}
+
+.bg-success.card-box {
+    background: #1987545e !important;
+}
+
+.bg-danger.card-box {
+    background: #dc354557 !important;
+}
+
+.bg-warning.card-box {
+    background: #ffc10759 !important;
+}
+
+div#leaderboardTable_wrapper tr.even td {
+    background: #292c35 !important;
+    color: white !important;
+}
+
+div#leaderboardTable_wrapper tr.even td span {
+    color: white !important;
+}
+
+div#leaderboardTable_wrapper tr.odd td {
+    background: #55575c6b !important;
+    color: white !important;
+}
+
+div#leaderboardTable_wrapper .bg-success {
+    background: #1987541a !important;
+}
+
+
+div#leaderboardTable_wrapper tr .small.text-secondary {
+    color: white !important;
+}
+
+div#leaderboardTable_paginate ul li a {
+    background: #292c35 !important;
+    color: white !important;
+    border-radius: 0;
+}
+
+div#leaderboardTable_paginate ul li.active a {
+    background: #363c47 !important;
+    border: 1px solid white;
+}
+
+
+.table-theme-overview tr.odd td {
+        background: #1f2937 !important;
+        color: white !important;
+}
+
+.table-theme-overview tr.even td {
+        background: #1f2937 !important;
+        color: white !important;
+}
+
+.table-theme-overview tr.odd td span{
+       
+    color: white !important;
+}
+
+.table-theme-overview tr.even td span {
+    color: white !important;
+}
+
+
+ul.pagination li a {
+    background: #292c35 !important;
+    color: white !important;
+    border-radius: 0;
+}
+
+ul.pagination li.active a {
+    background: #363c47 !important;
+    border: 1px solid white;
+}
+
