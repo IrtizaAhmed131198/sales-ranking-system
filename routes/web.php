@@ -8,6 +8,10 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\TargetController;
 use App\Http\Controllers\SalesController;
 
+use App\Http\Controllers\BenchmarkController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\NoticeController;
+
 // Authentication routes
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
@@ -22,4 +26,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('departments', DepartmentController::class);
     Route::resource('targets', TargetController::class);
     Route::resource('sales', SalesController::class);
+    Route::resource('benchmarks', BenchmarkController::class);
+    Route::resource('roles', RoleController::class);
+    Route::resource('notices', NoticeController::class);
 });

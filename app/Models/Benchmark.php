@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Target extends Model
+class Benchmark extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'target_amount'];
+    protected $fillable = ['name'];
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(User::class);
     }
 }

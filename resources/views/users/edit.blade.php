@@ -32,7 +32,7 @@
                     @enderror
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="department_id" class="form-label text-secondary small">Department (Optional)</label>
                     <select name="department_id" id="department_id" class="form-select @error('department_id') is-invalid @enderror">
                         <option value="">Select Department</option>
@@ -43,6 +43,36 @@
                         @endforeach
                     </select>
                     @error('department_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label for="benchmark_id" class="form-label text-secondary small">Benchmark Category (Optional)</label>
+                    <select name="benchmark_id" id="benchmark_id" class="form-select @error('benchmark_id') is-invalid @enderror">
+                        <option value="">Select Benchmark Category</option>
+                        @foreach($benchmarks as $bm)
+                            <option value="{{ $bm->id }}" {{ old('benchmark_id', $user->benchmark_id) == $bm->id ? 'selected' : '' }}>
+                                {{ $bm->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('benchmark_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="role_id" class="form-label text-secondary small">Salesperson Role (Optional)</label>
+                    <select name="role_id" id="role_id" class="form-select @error('role_id') is-invalid @enderror">
+                        <option value="">Select Role</option>
+                        @foreach($roles as $role)
+                            <option value="{{ $role->id }}" {{ old('role_id', $user->role_id) == $role->id ? 'selected' : '' }}>
+                                {{ $role->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('role_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

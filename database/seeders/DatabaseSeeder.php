@@ -30,32 +30,61 @@ class DatabaseSeeder extends Seeder
         $deptEnterprise = Department::create(['name' => 'Enterprise']);
         $deptRetail = Department::create(['name' => 'Retail']);
 
+        // Create Benchmarks (Categories)
+        $bm10 = \App\Models\Benchmark::create(['name' => '10000']);
+        $bm15 = \App\Models\Benchmark::create(['name' => '15000']);
+        $bm7 = \App\Models\Benchmark::create(['name' => '7500']);
+
+        // Create Roles
+        $roleUpsell = \App\Models\Role::create(['name' => 'upsell']);
+        $roleFront = \App\Models\Role::create(['name' => 'front sale']);
+
+        // Create Notices
+        \App\Models\Notice::create([
+            'title' => 'Quarterly Target Update',
+            'content' => 'Please note that the general sales benchmarks have been updated for this quarter. Check your targets section for details.'
+        ]);
+        \App\Models\Notice::create([
+            'title' => 'Top Performers Bonus',
+            'content' => 'Top performers of this month will receive an extra commission of 10% on achieved targets.'
+        ]);
+
         // 3. Create Salespersons
         $salespersons = [
             [
                 'name' => 'John Doe',
                 'email' => 'john@example.com',
                 'department_id' => $deptSales->id,
+                'benchmark_id' => $bm10->id,
+                'role_id' => $roleUpsell->id,
             ],
             [
                 'name' => 'Jane Smith',
                 'email' => 'jane@example.com',
                 'department_id' => $deptMarketing->id,
+                'benchmark_id' => $bm15->id,
+                'role_id' => $roleFront->id,
             ],
             [
                 'name' => 'Alice Johnson',
                 'email' => 'alice@example.com',
                 'department_id' => $deptEnterprise->id,
+                'benchmark_id' => $bm7->id,
+                'role_id' => $roleUpsell->id,
             ],
             [
                 'name' => 'Bob Brown',
                 'email' => 'bob@example.com',
                 'department_id' => $deptRetail->id,
+                'benchmark_id' => $bm10->id,
+                'role_id' => $roleFront->id,
             ],
             [
                 'name' => 'Charlie Green',
                 'email' => 'charlie@example.com',
                 'department_id' => $deptSales->id,
+                'benchmark_id' => $bm15->id,
+                'role_id' => $roleUpsell->id,
             ],
         ];
 
@@ -65,28 +94,26 @@ class DatabaseSeeder extends Seeder
                 'name' => $sp['name'],
                 'email' => $sp['email'],
                 'department_id' => $sp['department_id'],
+                'benchmark_id' => $sp['benchmark_id'],
+                'role_id' => $sp['role_id'],
                 'is_admin' => false,
             ]);
         }
 
-        // 4. Create Targets (for June and July 2026)
-        $months = ['2026-06', '2026-07'];
+        // 4. Create Targets (flat, not monthly)
         $targetsConfig = [
-            'John Doe' => ['2026-06' => 4500, '2026-07' => 5000],
-            'Jane Smith' => ['2026-06' => 5000, '2026-07' => 6000],
-            'Alice Johnson' => ['2026-06' => 7500, '2026-07' => 8000],
-            'Bob Brown' => ['2026-06' => 3500, '2026-07' => 4000],
-            'Charlie Green' => ['2026-06' => 6500, '2026-07' => 7000],
+            'John Doe' => 5000,
+            'Jane Smith' => 6000,
+            'Alice Johnson' => 8000,
+            'Bob Brown' => 4000,
+            'Charlie Green' => 7000,
         ];
 
         foreach ($users as $user) {
-            foreach ($months as $month) {
-                Target::create([
-                    'user_id' => $user->id,
-                    'month' => $month,
-                    'target_amount' => $targetsConfig[$user->name][$month] ?? 5000,
-                ]);
-            }
+            Target::create([
+                'user_id' => $user->id,
+                'target_amount' => $targetsConfig[$user->name] ?? 5000,
+            ]);
         }
 
         // 5. Create Sales Entries (multiple per user)

@@ -11,20 +11,6 @@
         <!-- Filters Form -->
         <form action="{{ route('dashboard') }}" method="GET" class="d-flex align-items-center gap-2 flex-wrap bg-secondary bg-opacity-10 p-2 rounded-3 border border-secondary border-opacity-10">
             <div>
-                <label class="form-label small text-secondary mb-1">Month</label>
-                <select name="month" class="form-select form-select-sm" onchange="this.form.submit()">
-                    @if(empty($availableMonths))
-                        <option value="{{ date('Y-m') }}">{{ date('F Y') }}</option>
-                    @else
-                        @foreach($availableMonths as $month)
-                            <option value="{{ $month }}" {{ $selectedMonth == $month ? 'selected' : '' }}>
-                                {{ date('F Y', strtotime($month . '-01')) }}
-                            </option>
-                        @endforeach
-                    @endif
-                </select>
-            </div>
-            <div>
                 <label class="form-label small text-secondary mb-1">Department</label>
                 <select name="department_id" class="form-select form-select-sm" onchange="this.form.submit()">
                     <option value="">All Departments</option>
@@ -35,7 +21,7 @@
                     @endforeach
                 </select>
             </div>
-            @if($selectedDeptId || (isset($availableMonths[0]) && $selectedMonth != $availableMonths[0]))
+            @if($selectedDeptId)
                 <div class="align-self-end">
                     <a href="{{ route('dashboard') }}" class="btn btn-sm btn-outline-danger" title="Clear Filters">
                         <i class="fa-solid fa-filter-circle-xmark"></i>

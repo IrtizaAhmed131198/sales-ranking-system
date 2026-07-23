@@ -7,10 +7,31 @@ use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::withCount('users')->get();
-        return view('departments.index', compact('departments'));
+        if ($request->ajax()) {
+            $departments = Department::withCount('users');
+            return \Yajra\DataTables\Facades\DataTables::of($departments)
+                ->addColumn('actions', function ($dept) {
+                    return '
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="' . route('departments.edit', $dept->id) . '" class="btn btn-sm btn-outline-info" title="Edit">
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
+                            <form action="' . route('departments.destroy', $dept->id) . '" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this department? All associated users will remain but without a department assigned.\');" style="display:inline;">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </form>
+                        </div>
+                    ';
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
+        }
+        return view('departments.index');
     }
 
     public function create()

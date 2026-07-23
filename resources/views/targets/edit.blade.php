@@ -6,8 +6,8 @@
         <a href="{{ route('targets.index') }}" class="btn btn-sm btn-outline-secondary mb-2">
             <i class="fa-solid fa-arrow-left me-2"></i>Back to Targets
         </a>
-        <h2 class="fw-bold m-0">Edit Monthly Target</h2>
-        <p class="text-secondary m-0">Update target amount or month details</p>
+        <h2 class="fw-bold m-0">Edit Target</h2>
+        <p class="text-secondary m-0">Update target amount details</p>
     </div>
 
     <div class="card">
@@ -31,18 +31,10 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-4">
                     <label for="target_amount" class="form-label text-secondary small">Target Amount ($)</label>
                     <input type="number" step="0.01" name="target_amount" id="target_amount" class="form-control @error('target_amount') is-invalid @enderror" value="{{ old('target_amount', $target->target_amount) }}" required placeholder="e.g. 5000.00">
                     @error('target_amount')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-4">
-                    <label for="month" class="form-label text-secondary small">Target Month</label>
-                    <input type="month" name="month" id="month" class="form-control @error('month') is-invalid @enderror" value="{{ old('month', $target->month) }}" required>
-                    @error('month')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

@@ -21,43 +21,14 @@
                             <th style="width: 80px;">ID</th>
                             <th>Name</th>
                             <th>Email Address</th>
+                            <th>Benchmark</th>
                             <th>Department</th>
+                            <th>Role</th>
                             <th>Created At</th>
                             <th class="text-end" style="width: 150px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($users as $user)
-                            <tr>
-                                <td>#{{ $user->id }}</td>
-                                <td class="fw-semibold">{{ $user->name }}</td>
-                                <td>{{ $user->email ?? 'N/A' }}</td>
-                                <td>
-                                    @if($user->department)
-                                        <span class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 px-2.5 py-1.5">
-                                            {{ $user->department->name }}
-                                        </span>
-                                    @else
-                                        <span class="text-secondary small">No Department</span>
-                                    @endif
-                                </td>
-                                <td class="text-secondary small">{{ $user->created_at->format('M d, Y') }}</td>
-                                <td class="text-end">
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-outline-info" title="Edit">
-                                            <i class="fa-solid fa-pencil"></i>
-                                        </a>
-                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this salesperson? All their targets and sales history will also be permanently deleted.');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -70,8 +41,30 @@
 <script>
     $(document).ready(function() {
         $('#usersTable').DataTable({
-            "pageLength": 10,
-            "ordering": true
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('users.index') }}",
+            columns: [
+                { data: 'id', name: 'id', render: function(data) { return '#' + data; } },
+                { data: 'name', name: 'name', className: 'fw-semibold' },
+                { data: 'email', name: 'email', defaultContent: 'N/A' },
+                { data: 'benchmark_name', name: 'benchmark.name', render: function(data) {
+                    return '<span class="badge bg-success bg-opacity-20 text-success text-white border border-success border-opacity-30 px-2.5 py-1.5">' + data + '</span>';
+                }},
+                { data: 'department_name', name: 'department.name', orderable: false, render: function(data) {
+                    if (data !== 'No Department') {
+                        return '<span class="badge bg-primary bg-opacity-20 text-primary text-white border border-primary border-opacity-30 px-2.5 py-1.5">' + data + '</span>';
+                    }
+                    return '<span class="text-secondary small">' + data + '</span>';
+                }},
+                { data: 'role_name', name: 'role.name', render: function(data) {
+                    return '<span class="badge bg-danger bg-opacity-20 text-danger text-white border border-danger border-opacity-30 px-2.5 py-1.5">' + data + '</span>';
+                }},
+                { data: 'created_date', name: 'created_at', className: 'text-secondary small' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-end' }
+            ],
+            pageLength: 10,
+            ordering: true
         });
     });
 </script>

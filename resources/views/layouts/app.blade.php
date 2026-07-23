@@ -162,17 +162,68 @@
 
         /* Custom Table Design */
         .table {
-            color: var(--text-primary);
+            color: var(--text-primary) !important;
+            background-color: var(--bg-card) !important;
         }
         .table th {
             background-color: rgba(255, 255, 255, 0.02) !important;
-            color: var(--text-secondary);
-            border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary) !important;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.05) !important;
             font-weight: 600;
         }
         .table td {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background-color: var(--bg-card) !important;
+            color: var(--text-primary) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
             vertical-align: middle;
+        }
+        .table-hover tbody tr:hover td {
+            background-color: rgba(255, 255, 255, 0.04) !important;
+            color: #fff !important;
+        }
+
+        /* DataTables Dark Theme Overrides */
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_processing,
+        .dataTables_wrapper .dataTables_paginate {
+            color: var(--text-secondary) !important;
+            margin-bottom: 1rem;
+            margin-top: 1rem;
+        }
+        .dataTables_wrapper .dataTables_filter input,
+        .dataTables_wrapper .dataTables_length select {
+            background-color: rgba(0, 0, 0, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
+            border-radius: 0.5rem;
+            padding: 0.375rem 0.75rem;
+        }
+        .dataTables_wrapper .dataTables_filter input:focus,
+        .dataTables_wrapper .dataTables_length select:focus {
+            outline: none;
+            border-color: var(--accent-primary) !important;
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+        }
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover)) !important;
+            border-color: transparent !important;
+            color: #fff !important;
+        }
+        .page-link {
+            background-color: rgba(0, 0, 0, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: var(--text-secondary) !important;
+        }
+        .page-link:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            color: #fff !important;
+        }
+        .page-item.disabled .page-link {
+            background-color: rgba(0, 0, 0, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.05) !important;
+            color: rgba(255, 255, 255, 0.2) !important;
         }
 
         /* Rank Badges */
@@ -259,13 +310,31 @@
             <li class="sidebar-item">
                 <a href="{{ route('targets.index') }}" class="sidebar-link {{ request()->is('targets*') ? 'active' : '' }}">
                     <i class="fa-solid fa-bullseye"></i>
-                    <span>Monthly Targets</span>
+                    <span>Targets</span>
                 </a>
             </li>
             <li class="sidebar-item">
                 <a href="{{ route('sales.index') }}" class="sidebar-link {{ request()->is('sales*') ? 'active' : '' }}">
                     <i class="fa-solid fa-hand-holding-dollar"></i>
                     <span>Sales Management</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ route('benchmarks.index') }}" class="sidebar-link {{ request()->is('benchmarks*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span>Benchmarks</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ route('roles.index') }}" class="sidebar-link {{ request()->is('roles*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-user-tag"></i>
+                    <span>Role Management</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ route('notices.index') }}" class="sidebar-link {{ request()->is('notices*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span>Notice Board</span>
                 </a>
             </li>
         </ul>

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('email')->nullable()->unique();
             $table->string('password')->nullable();
             $table->foreignId('department_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('benchmark_id')->nullable()->constrained('benchmarks')->nullOnDelete();
+            $table->foreignId('role_id')->nullable()->constrained('roles')->nullOnDelete();
             $table->boolean('is_admin')->default(false);
             $table->rememberToken();
             $table->timestamps();
