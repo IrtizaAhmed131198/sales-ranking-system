@@ -22,11 +22,12 @@ class DashboardController extends Controller
             ->select(
                 'users.id',
                 'users.name',
+                'users.image_path',
                 'users.department_id',
                 'targets.target_amount',
                 DB::raw('COALESCE(SUM(sales.amount), 0) as total_sales')
             )
-            ->groupBy('users.id', 'users.name', 'users.department_id', 'targets.target_amount');
+            ->groupBy('users.id', 'users.name', 'users.image_path', 'users.department_id', 'targets.target_amount');
 
         if ($selectedDeptId) {
             $query->where('users.department_id', $selectedDeptId);

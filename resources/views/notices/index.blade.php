@@ -19,6 +19,7 @@
                     <thead>
                         <tr>
                             <th style="width: 80px;">ID</th>
+                            <th style="width: 80px;">Image</th>
                             <th>Title</th>
                             <th>Announcement Content</th>
                             <th>Posted At</th>
@@ -43,6 +44,7 @@
             ajax: "{{ route('notices.index') }}",
             columns: [
                 { data: 'id', name: 'id', render: function(data) { return '#' + data; } },
+                { data: 'image', name: 'image', orderable: false, searchable: false },
                 { data: 'title', name: 'title', className: 'fw-semibold' },
                 { data: 'content', name: 'content', className: 'text-secondary text-truncate', render: function(data) {
                     return data.length > 80 ? data.substr(0, 80) + '...' : data;
@@ -52,7 +54,7 @@
             ],
             pageLength: 10,
             ordering: true,
-            order: [[3, "desc"]] // Show newest notices first
+            order: [[4, "desc"]] // Show newest notices first (index 4 is Posted At now)
         });
     });
 </script>

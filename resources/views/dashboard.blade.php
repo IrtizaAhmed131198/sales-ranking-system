@@ -227,8 +227,16 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <div class="fw-semibold">{{ $sp->name }}</div>
-                                                <div class="small text-secondary">{{ $sp->department->name ?? 'No Department' }}</div>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    @php
+                                                        $avatarUrl = $sp->image_path ? asset($sp->image_path) : 'https://ui-avatars.com/api/?name=' . urlencode($sp->name) . '&background=6366f1&color=fff';
+                                                    @endphp
+                                                    <img src="{{ $avatarUrl }}" alt="{{ $sp->name }}" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
+                                                    <div>
+                                                        <div class="fw-semibold">{{ $sp->name }}</div>
+                                                        <div class="small text-secondary">{{ $sp->department->name ?? 'No Department' }}</div>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td>${{ number_format($sp->target_amount, 2) }}</td>
                                             <td>${{ number_format($sp->total_sales, 2) }}</td>

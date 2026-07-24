@@ -12,7 +12,7 @@
 
     <div class="card">
         <div class="card-body p-4">
-            <form action="{{ route('notices.store') }}" method="POST">
+            <form action="{{ route('notices.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
                     <label for="title" class="form-label text-secondary small">Notice Title</label>
@@ -22,10 +22,18 @@
                     @enderror
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="content" class="form-label text-secondary small">Notice Content</label>
                     <textarea name="content" id="content" rows="6" class="form-control @error('content') is-invalid @enderror" required placeholder="Write the announcement description..."></textarea>
                     @error('content')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="image" class="form-label text-secondary small">Attachment Image (Optional)</label>
+                    <input type="file" name="image" id="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
+                    @error('image')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

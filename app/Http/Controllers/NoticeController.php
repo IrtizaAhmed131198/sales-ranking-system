@@ -12,6 +12,12 @@ class NoticeController extends Controller
         if ($request->ajax()) {
             $notices = Notice::select('notices.*');
             return \Yajra\DataTables\Facades\DataTables::of($notices)
+                ->addColumn('image', function ($notice) {
+                    if ($notice->image_path) {
+                        return '<img src="' . asset($notice->image_path) . '" alt="" class="rounded" style="width: 50px; height: 35px; object-fit: cover;">';
+                    }
+                    return '<span class="text-secondary small">No Image</span>';
+                })
                 ->addColumn('formatted_date', function ($notice) {
                     return $notice->created_at->format('M d, Y H:i');
                 })
@@ -31,7 +37,7 @@ class NoticeController extends Controller
                         </div>
                     ';
                 })
-                ->rawColumns(['actions'])
+                ->rawColumns(['image', 'actions'])
                 ->make(true);
         }
         return view('notices.index');
@@ -47,9 +53,22 @@ class NoticeController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        Notice::create($request->only('title', 'content'));
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/notices'), $filename);
+            $imagePath = 'uploads/notices/' . $filename;
+        }
+
+        Notice::create([
+            'title' => $request->title,
+            'content' => $request->content,
+            'image_path' => $imagePath,
+        ]);
 
         return redirect()->route('notices.index')->with('success', 'Notice posted successfully.');
     }
@@ -64,15 +83,35 @@ class NoticeController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $notice->update($request->only('title', 'content'));
+        $imagePath = $notice->image_path;
+        if ($request->hasFile('image')) {
+            if ($notice->image_path && file_exists(public_path($notice->image_path))) {
+                @unlink(public_path($notice->image_path));
+            }
+            $file = $request->file('image');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/notices'), $filename);
+            $imagePath = 'uploads/notices/' . $filename;
+        }
+
+        $notice->update([
+            'title' => $request->title,
+            'content' => $request->content,
+            'image_path' => $imagePath,
+        ]);
 
         return redirect()->route('notices.index')->with('success', 'Notice updated successfully.');
     }
 
     public function destroy(Notice $notice)
     {
+        if ($notice->image_path && file_exists(public_path($notice->image_path))) {
+            @unlink(public_path($notice->image_path));
+        }
+
         $notice->delete();
         return redirect()->route('notices.index')->with('success', 'Notice deleted successfully.');
     }

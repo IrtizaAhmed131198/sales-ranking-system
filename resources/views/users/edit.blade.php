@@ -12,7 +12,7 @@
 
     <div class="card">
         <div class="card-body p-4">
-            <form action="{{ route('users.update', $user->id) }}" method="POST">
+            <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 
@@ -62,7 +62,7 @@
                     @enderror
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="role_id" class="form-label text-secondary small">Salesperson Role (Optional)</label>
                     <select name="role_id" id="role_id" class="form-select @error('role_id') is-invalid @enderror">
                         <option value="">Select Role</option>
@@ -73,6 +73,20 @@
                         @endforeach
                     </select>
                     @error('role_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="image" class="form-label text-secondary small">Salesperson Image (Optional)</label>
+                    @if($user->image_path)
+                        <div class="mb-2">
+                            <img src="{{ asset($user->image_path) }}" alt="{{ $user->name }}" class="rounded-circle border border-secondary" style="width: 80px; height: 80px; object-fit: cover;">
+                            <span class="text-secondary small ms-2">Current Image</span>
+                        </div>
+                    @endif
+                    <input type="file" name="image" id="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
+                    @error('image')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

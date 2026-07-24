@@ -12,7 +12,7 @@
 
     <div class="card">
         <div class="card-body p-4">
-            <form action="{{ route('users.store') }}" method="POST">
+            <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 
                 <div class="mb-3">
@@ -61,7 +61,7 @@
                     @enderror
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="role_id" class="form-label text-secondary small">Salesperson Role (Optional)</label>
                     <select name="role_id" id="role_id" class="form-select @error('role_id') is-invalid @enderror">
                         <option value="">Select Role</option>
@@ -72,6 +72,14 @@
                         @endforeach
                     </select>
                     @error('role_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="image" class="form-label text-secondary small">Salesperson Image (Optional)</label>
+                    <input type="file" name="image" id="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
+                    @error('image')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

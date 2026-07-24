@@ -12,7 +12,7 @@
 
     <div class="card">
         <div class="card-body p-4">
-            <form action="{{ route('notices.update', $notice->id) }}" method="POST">
+            <form action="{{ route('notices.update', $notice->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="mb-3">
@@ -23,10 +23,24 @@
                     @enderror
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="content" class="form-label text-secondary small">Notice Content</label>
                     <textarea name="content" id="content" rows="6" class="form-control @error('content') is-invalid @enderror" required placeholder="Write the announcement description...">{{ old('content', $notice->content) }}</textarea>
                     @error('content')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="image" class="form-label text-secondary small">Attachment Image (Optional)</label>
+                    @if($notice->image_path)
+                        <div class="mb-2">
+                            <img src="{{ asset($notice->image_path) }}" alt="" class="rounded border border-secondary" style="max-width: 150px; height: auto; object-fit: cover;">
+                            <span class="text-secondary small ms-2">Current Image</span>
+                        </div>
+                    @endif
+                    <input type="file" name="image" id="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
+                    @error('image')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

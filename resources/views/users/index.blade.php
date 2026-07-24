@@ -19,6 +19,7 @@
                     <thead>
                         <tr>
                             <th style="width: 80px;">ID</th>
+                            <th style="width: 60px;">Photo</th>
                             <th>Name</th>
                             <th>Email Address</th>
                             <th>Benchmark</th>
@@ -46,6 +47,7 @@
             ajax: "{{ route('users.index') }}",
             columns: [
                 { data: 'id', name: 'id', render: function(data) { return '#' + data; } },
+                { data: 'photo', name: 'photo', orderable: false, searchable: false },
                 { data: 'name', name: 'name', className: 'fw-semibold' },
                 { data: 'email', name: 'email', defaultContent: 'N/A' },
                 { data: 'benchmark_name', name: 'benchmark.name', render: function(data) {

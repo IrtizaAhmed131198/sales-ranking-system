@@ -13,6 +13,10 @@ class UserController extends Controller
         if ($request->ajax()) {
             $users = User::where('is_admin', false)->with(['department', 'role', 'benchmark'])->select('users.*');
             return \Yajra\DataTables\Facades\DataTables::of($users)
+                ->addColumn('photo', function ($user) {
+                    $url = $user->image_path ? asset($user->image_path) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=6366f1&color=fff';
+                    return '<img src="' . $url . '" alt="' . $user->name . '" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">';
+                })
                 ->addColumn('department_name', function ($user) {
                     return $user->department ? $user->department->name : 'No Department';
                 })
@@ -41,7 +45,7 @@ class UserController extends Controller
                         </div>
                     ';
                 })
-                ->rawColumns(['actions'])
+                ->rawColumns(['photo', 'actions'])
                 ->make(true);
         }
         return view('users.index');
@@ -63,7 +67,16 @@ class UserController extends Controller
             'department_id' => 'nullable|exists:departments,id',
             'benchmark_id' => 'nullable|exists:benchmarks,id',
             'role_id' => 'nullable|exists:roles,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/users'), $filename);
+            $imagePath = 'uploads/users/' . $filename;
+        }
 
         User::create([
             'name' => $request->name,
@@ -71,6 +84,7 @@ class UserController extends Controller
             'department_id' => $request->department_id,
             'benchmark_id' => $request->benchmark_id,
             'role_id' => $request->role_id,
+            'image_path' => $imagePath,
             'is_admin' => false,
         ]);
 
@@ -101,7 +115,19 @@ class UserController extends Controller
             'department_id' => 'nullable|exists:departments,id',
             'benchmark_id' => 'nullable|exists:benchmarks,id',
             'role_id' => 'nullable|exists:roles,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $imagePath = $user->image_path;
+        if ($request->hasFile('image')) {
+            if ($user->image_path && file_exists(public_path($user->image_path))) {
+                @unlink(public_path($user->image_path));
+            }
+            $file = $request->file('image');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/users'), $filename);
+            $imagePath = 'uploads/users/' . $filename;
+        }
 
         $user->update([
             'name' => $request->name,
@@ -109,6 +135,7 @@ class UserController extends Controller
             'department_id' => $request->department_id,
             'benchmark_id' => $request->benchmark_id,
             'role_id' => $request->role_id,
+            'image_path' => $imagePath,
         ]);
 
         return redirect()->route('users.index')->with('success', 'Salesperson updated successfully.');
@@ -118,6 +145,10 @@ class UserController extends Controller
     {
         if ($user->is_admin) {
             abort(403, 'Unauthorized action.');
+        }
+
+        if ($user->image_path && file_exists(public_path($user->image_path))) {
+            @unlink(public_path($user->image_path));
         }
 
         $user->delete();
