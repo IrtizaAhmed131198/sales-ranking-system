@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name', 'Sales Performance') }} - Admin Portal</title>
 
     <!-- Google Fonts (Outfit) -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -18,7 +20,10 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
 
-    <link rel="stylesheet" href="{{('assets/css/style.css')}}">
+    <link rel="stylesheet" href="{{ 'assets/css/style.css' }}">
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <style>
         :root {
@@ -148,14 +153,16 @@
         }
 
         /* Forms styling */
-        .form-control, .form-select {
+        .form-control,
+        .form-select {
             background-color: rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: #fff;
             border-radius: 0.5rem;
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus,
+        .form-select:focus {
             background-color: rgba(0, 0, 0, 0.3);
             border-color: var(--accent-primary);
             box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
@@ -167,18 +174,21 @@
             color: var(--text-primary) !important;
             background-color: var(--bg-card) !important;
         }
+
         .table th {
             background-color: rgba(255, 255, 255, 0.02) !important;
             color: var(--text-secondary) !important;
             border-bottom: 2px solid rgba(255, 255, 255, 0.05) !important;
             font-weight: 600;
         }
+
         .table td {
             background-color: var(--bg-card) !important;
             color: var(--text-primary) !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
             vertical-align: middle;
         }
+
         .table-hover tbody tr:hover td {
             background-color: rgba(255, 255, 255, 0.04) !important;
             color: #fff !important;
@@ -194,6 +204,7 @@
             margin-bottom: 1rem;
             margin-top: 1rem;
         }
+
         .dataTables_wrapper .dataTables_filter input,
         .dataTables_wrapper .dataTables_length select {
             background-color: rgba(0, 0, 0, 0.2) !important;
@@ -202,26 +213,31 @@
             border-radius: 0.5rem;
             padding: 0.375rem 0.75rem;
         }
+
         .dataTables_wrapper .dataTables_filter input:focus,
         .dataTables_wrapper .dataTables_length select:focus {
             outline: none;
             border-color: var(--accent-primary) !important;
             box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
         }
+
         .page-item.active .page-link {
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover)) !important;
             border-color: transparent !important;
             color: #fff !important;
         }
+
         .page-link {
             background-color: rgba(0, 0, 0, 0.2) !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             color: var(--text-secondary) !important;
         }
+
         .page-link:hover {
             background-color: rgba(255, 255, 255, 0.05) !important;
             color: #fff !important;
         }
+
         .page-item.disabled .page-link {
             background-color: rgba(0, 0, 0, 0.1) !important;
             border-color: rgba(255, 255, 255, 0.05) !important;
@@ -233,10 +249,12 @@
             background: linear-gradient(135deg, #f59e0b, #d97706);
             color: #fff;
         }
+
         .badge-silver {
             background: linear-gradient(135deg, #9ca3af, #4b5563);
             color: #fff;
         }
+
         .badge-bronze {
             background: linear-gradient(135deg, #b45309, #78350f);
             color: #fff;
@@ -247,6 +265,7 @@
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
             border: none;
         }
+
         .btn-primary:hover {
             background: linear-gradient(135deg, var(--accent-hover), #4338ca);
         }
@@ -256,13 +275,16 @@
             width: 8px;
             height: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: var(--bg-primary);
         }
+
         ::-webkit-scrollbar-thumb {
             background: var(--bg-card);
             border-radius: 4px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: var(--text-secondary);
         }
@@ -271,17 +293,86 @@
             .sidebar {
                 transform: translateX(-100%);
             }
+
             .sidebar.active {
                 transform: translateX(0);
             }
+
             .main-wrapper {
                 margin-left: 0;
                 width: 100%;
             }
         }
+
+        /* Select2 Dark Mode Override Styles */
+        .select2-container--default .select2-selection--single {
+            background-color: #161c2d !important;
+            border: 1px solid #222b45 !important;
+            border-radius: 8px !important;
+            height: 42px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #fff !important;
+            font-size: 14px !important;
+            font-family: 'Outfit', sans-serif !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 40px !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow b {
+            border-color: #a0aec0 transparent transparent transparent !important;
+        }
+
+        .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+            border-color: transparent transparent #a0aec0 transparent !important;
+        }
+
+        .select2-container--default .select2-dropdown {
+            background-color: #161c2d !important;
+            border: 1px solid #222b45 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+            z-index: 9999 !important;
+        }
+
+        .select2-container--default .select2-search--dropdown .select2-search__field {
+            background-color: #0b0f19 !important;
+            border: 1px solid #222b45 !important;
+            border-radius: 6px !important;
+            color: #fff !important;
+            padding: 6px 10px !important;
+            font-family: 'Outfit', sans-serif !important;
+        }
+
+        .select2-container--default .select2-results__option {
+            padding: 8px 12px !important;
+            color: #cbd5e1 !important;
+            font-size: 14px !important;
+            font-family: 'Outfit', sans-serif !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #2563eb !important;
+            color: #fff !important;
+        }
+
+        .select2-container--default .select2-results__option[aria-selected=true] {
+            background-color: #232d45 !important;
+            color: #fff !important;
+        }
+
+        .select2-container--default .select2-results__option--selected {
+            background-color: #161c2d;
+        }
     </style>
     @yield('styles')
 </head>
+
 <body>
 
     <!-- Sidebar Navigation -->
@@ -292,13 +383,15 @@
         </a>
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->is('admin') || request()->is('dashboard*') ? 'active' : '' }}">
+                <a href="{{ route('dashboard') }}"
+                    class="sidebar-link {{ request()->is('admin') || request()->is('dashboard*') ? 'active' : '' }}">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="{{ route('departments.index') }}" class="sidebar-link {{ request()->is('departments*') ? 'active' : '' }}">
+                <a href="{{ route('departments.index') }}"
+                    class="sidebar-link {{ request()->is('departments*') ? 'active' : '' }}">
                     <i class="fa-solid fa-sitemap"></i>
                     <span>Departments</span>
                 </a>
@@ -310,31 +403,36 @@
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="{{ route('targets.index') }}" class="sidebar-link {{ request()->is('targets*') ? 'active' : '' }}">
+                <a href="{{ route('targets.index') }}"
+                    class="sidebar-link {{ request()->is('targets*') ? 'active' : '' }}">
                     <i class="fa-solid fa-bullseye"></i>
                     <span>Targets</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="{{ route('sales.index') }}" class="sidebar-link {{ request()->is('sales*') ? 'active' : '' }}">
+                <a href="{{ route('sales.index') }}"
+                    class="sidebar-link {{ request()->is('sales*') ? 'active' : '' }}">
                     <i class="fa-solid fa-hand-holding-dollar"></i>
                     <span>Sales Management</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="{{ route('benchmarks.index') }}" class="sidebar-link {{ request()->is('benchmarks*') ? 'active' : '' }}">
+                <a href="{{ route('benchmarks.index') }}"
+                    class="sidebar-link {{ request()->is('benchmarks*') ? 'active' : '' }}">
                     <i class="fa-solid fa-gauge-high"></i>
                     <span>Benchmarks</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="{{ route('roles.index') }}" class="sidebar-link {{ request()->is('roles*') ? 'active' : '' }}">
+                <a href="{{ route('roles.index') }}"
+                    class="sidebar-link {{ request()->is('roles*') ? 'active' : '' }}">
                     <i class="fa-solid fa-user-tag"></i>
                     <span>Role Management</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="{{ route('notices.index') }}" class="sidebar-link {{ request()->is('notices*') ? 'active' : '' }}">
+                <a href="{{ route('notices.index') }}"
+                    class="sidebar-link {{ request()->is('notices*') ? 'active' : '' }}">
                     <i class="fa-solid fa-clipboard-list"></i>
                     <span>Notice Board</span>
                 </a>
@@ -369,17 +467,21 @@
         </header>
 
         <main class="content-area">
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show border-0 bg-success text-white shadow-sm mb-4" role="alert" style="--bs-bg-opacity: 0.2;">
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show border-0 bg-success text-white shadow-sm mb-4"
+                    role="alert" style="--bs-bg-opacity: 0.2;">
                     <i class="fa-solid fa-circle-check me-2"></i>{{ session('success') }}
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                        aria-label="Close"></button>
                 </div>
             @endif
 
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show border-0 bg-danger text-white shadow-sm mb-4" role="alert" style="--bs-bg-opacity: 0.2;">
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show border-0 bg-danger text-white shadow-sm mb-4"
+                    role="alert" style="--bs-bg-opacity: 0.2;">
                     <i class="fa-solid fa-circle-exclamation me-2"></i>{{ session('error') }}
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                        aria-label="Close"></button>
                 </div>
             @endif
 
@@ -394,8 +496,17 @@
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script>
         $(document).ready(function() {
+            // Initialize Select2 globally on all dropdown selectors except AJAX-based ones
+            $('select:not(.ajax-select)').select2({
+                width: '100%',
+                dropdownParent: $('body')
+            });
+
             // Mobile Sidebar Toggle
             $('#sidebar-toggle').click(function() {
                 $('.sidebar').toggleClass('active');
@@ -414,25 +525,26 @@
                 console.log('clicked'); // debug
 
                 // if (confirm(confirmMsg)) {
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: {
-                            _method: 'DELETE',
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            if (tableId && $.fn.DataTable.isDataTable(tableId)) {
-                                $(tableId).DataTable().ajax.reload(null, false);
-                            } else {
-                                window.location.reload();
-                            }
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        _method: 'DELETE',
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (tableId && $.fn.DataTable.isDataTable(tableId)) {
+                            $(tableId).DataTable().ajax.reload(null, false);
+                        } else {
+                            window.location.reload();
                         }
-                    });
+                    }
+                });
                 // }
             });
         });
     </script>
     @yield('scripts')
 </body>
+
 </html>

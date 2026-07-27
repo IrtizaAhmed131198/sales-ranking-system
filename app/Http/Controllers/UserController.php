@@ -162,4 +162,42 @@ class UserController extends Controller
         }
         return redirect()->route('users.index')->with('success', 'Salesperson deleted successfully.');
     }
+
+    public function search(Request $request)
+    {
+        $term = $request->input('q');
+        $page = $request->input('page', 1);
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        $query = User::where('is_admin', false)
+            ->where('is_active', true)
+            ->with('department');
+
+        if ($term) {
+            $query->where(function($q) use ($term) {
+                $q->where('name', 'LIKE', '%' . $term . '%')
+                  ->orWhere('email', 'LIKE', '%' . $term . '%');
+            });
+        }
+
+        $totalCount = $query->count();
+        $users = $query->skip($offset)->take($limit)->get();
+
+        $results = [];
+        foreach ($users as $user) {
+            $deptName = $user->department ? $user->department->name : 'No Dept';
+            $results[] = [
+                'id' => $user->id,
+                'text' => $user->name . ' (' . $deptName . ')'
+            ];
+        }
+
+        return response()->json([
+            'results' => $results,
+            'pagination' => [
+                'more' => ($offset + $limit) < $totalCount
+            ]
+        ]);
+    }
 }
