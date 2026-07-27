@@ -25,10 +25,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 2. Create Departments
-        $deptSales = Department::create(['name' => 'Sales']);
-        $deptMarketing = Department::create(['name' => 'Marketing']);
-        $deptEnterprise = Department::create(['name' => 'Enterprise']);
-        $deptRetail = Department::create(['name' => 'Retail']);
+        $deptSales = Department::create(['name' => 'Amigoz', 'head_name' => 'TALHA QASEEM']);
+        $deptMarketing = Department::create(['name' => 'Gene', 'head_name' => 'MUNAM QURESHI']);
+        $deptEnterprise = Department::create(['name' => 'Planet', 'head_name' => 'DANISH KHAN']);
+        $deptRetail = Department::create(['name' => 'ADP', 'head_name' => 'SYED YASOOB']);
 
         // Create Benchmarks (Categories)
         $bm10 = \App\Models\Benchmark::create(['name' => '10000']);
@@ -49,129 +49,83 @@ class DatabaseSeeder extends Seeder
             'content' => 'Top performers of this month will receive an extra commission of 10% on achieved targets.'
         ]);
 
-        // 3. Create Salespersons
-        $salespersons = [
-            [
-                'name' => 'John Doe',
-                'email' => 'john@example.com',
-                'department_id' => $deptSales->id,
-                'benchmark_id' => $bm10->id,
-                'role_id' => $roleUpsell->id,
-            ],
-            [
-                'name' => 'Jane Smith',
-                'email' => 'jane@example.com',
-                'department_id' => $deptMarketing->id,
-                'benchmark_id' => $bm15->id,
-                'role_id' => $roleFront->id,
-            ],
-            [
-                'name' => 'Alice Johnson',
-                'email' => 'alice@example.com',
-                'department_id' => $deptEnterprise->id,
-                'benchmark_id' => $bm7->id,
-                'role_id' => $roleUpsell->id,
-            ],
-            [
-                'name' => 'Bob Brown',
-                'email' => 'bob@example.com',
-                'department_id' => $deptRetail->id,
-                'benchmark_id' => $bm10->id,
-                'role_id' => $roleFront->id,
-            ],
-            [
-                'name' => 'Charlie Green',
-                'email' => 'charlie@example.com',
-                'department_id' => $deptSales->id,
-                'benchmark_id' => $bm15->id,
-                'role_id' => $roleUpsell->id,
-            ],
+        // 3. Programmatically generate 15 salespersons per department (Total 60)
+        $departmentsList = [
+            ['dept' => $deptSales, 'prefix' => 'Amigoz'],
+            ['dept' => $deptMarketing, 'prefix' => 'Gene'],
+            ['dept' => $deptEnterprise, 'prefix' => 'Planet'],
+            ['dept' => $deptRetail, 'prefix' => 'ADP'],
         ];
 
-        $users = [];
-        foreach ($salespersons as $sp) {
-            $users[] = User::create([
-                'name' => $sp['name'],
-                'email' => $sp['email'],
-                'department_id' => $sp['department_id'],
-                'benchmark_id' => $sp['benchmark_id'],
-                'role_id' => $sp['role_id'],
-                'is_admin' => false,
-            ]);
-        }
+        $benchmarksList = [$bm10->id, $bm15->id, $bm7->id];
+        $rolesList = [$roleUpsell->id, $roleFront->id];
 
-        // 4. Create Targets (flat, not monthly)
-        $targetsConfig = [
-            'John Doe' => 5000,
-            'Jane Smith' => 6000,
-            'Alice Johnson' => 8000,
-            'Bob Brown' => 4000,
-            'Charlie Green' => 7000,
-        ];
+        // Seed 15 salespeople for each department
+        foreach ($departmentsList as $deptObj) {
+            $dept = $deptObj['dept'];
+            $prefix = $deptObj['prefix'];
 
-        foreach ($users as $user) {
-            Target::create([
-                'user_id' => $user->id,
-                'target_amount' => $targetsConfig[$user->name] ?? 5000,
-            ]);
-        }
-
-        // 5. Create Sales Entries (multiple per user)
-        // Let's create multiple sales for June and July
-        $salesData = [
-            // June Sales (Achieved percentages)
-            // John Doe: target 4500 -> sales 5000 (111%)
-            ['name' => 'John Doe', 'amount' => 2000, 'date' => '2026-06-05'],
-            ['name' => 'John Doe', 'amount' => 1500, 'date' => '2026-06-12'],
-            ['name' => 'John Doe', 'amount' => 1500, 'date' => '2026-06-25'],
-
-            // Jane Smith: target 5000 -> sales 4000 (80%)
-            ['name' => 'Jane Smith', 'amount' => 1500, 'date' => '2026-06-02'],
-            ['name' => 'Jane Smith', 'amount' => 2500, 'date' => '2026-06-20'],
-
-            // Alice Johnson: target 7500 -> sales 9000 (120% - top performer)
-            ['name' => 'Alice Johnson', 'amount' => 4000, 'date' => '2026-06-10'],
-            ['name' => 'Alice Johnson', 'amount' => 5000, 'date' => '2026-06-22'],
-
-            // Bob Brown: target 3500 -> sales 1400 (40% - lowest performer)
-            ['name' => 'Bob Brown', 'amount' => 600, 'date' => '2026-06-08'],
-            ['name' => 'Bob Brown', 'amount' => 800, 'date' => '2026-06-18'],
-
-            // Charlie Green: target 6500 -> sales 6000 (92%)
-            ['name' => 'Charlie Green', 'amount' => 3000, 'date' => '2026-06-15'],
-            ['name' => 'Charlie Green', 'amount' => 3000, 'date' => '2026-06-28'],
-
-
-            // July Sales
-            // John Doe: target 5000 -> sales 4200 (84%)
-            ['name' => 'John Doe', 'amount' => 1200, 'date' => '2026-07-02'],
-            ['name' => 'John Doe', 'amount' => 3000, 'date' => '2026-07-14'],
-
-            // Jane Smith: target 6000 -> sales 6600 (110% - top performer)
-            ['name' => 'Jane Smith', 'amount' => 3000, 'date' => '2026-07-05'],
-            ['name' => 'Jane Smith', 'amount' => 3600, 'date' => '2026-07-12'],
-
-            // Alice Johnson: target 8000 -> sales 6400 (80%)
-            ['name' => 'Alice Johnson', 'amount' => 3400, 'date' => '2026-07-03'],
-            ['name' => 'Alice Johnson', 'amount' => 3000, 'date' => '2026-07-10'],
-
-            // Bob Brown: target 4000 -> sales 1600 (40% - lowest performer)
-            ['name' => 'Bob Brown', 'amount' => 1000, 'date' => '2026-07-08'],
-            ['name' => 'Bob Brown', 'amount' => 600, 'date' => '2026-07-15'],
-
-            // Charlie Green: target 7000 -> sales 5500 (78.5%)
-            ['name' => 'Charlie Green', 'amount' => 2500, 'date' => '2026-07-04'],
-            ['name' => 'Charlie Green', 'amount' => 3000, 'date' => '2026-07-11'],
-        ];
-
-        foreach ($salesData as $sd) {
-            $user = User::where('name', $sd['name'])->first();
-            if ($user) {
-                Sale::create([
-                    'user_id' => $user->id,
-                    'amount' => $sd['amount'],
-                    'date' => $sd['date'],
+            for ($i = 1; $i <= 15; $i++) {
+                $name = $prefix . ' Agent ' . $i;
+                $email = strtolower($prefix) . '_agent_' . $i . '@example.com';
+                
+                // Create user
+                $user = User::create([
+                    'name' => $name,
+                    'email' => $email,
+                    'department_id' => $dept->id,
+                    'benchmark_id' => $benchmarksList[array_rand($benchmarksList)],
+                    'role_id' => $rolesList[array_rand($rolesList)],
+                    'is_admin' => false,
                 ]);
+
+                // Create Target for user (between 3000 and 12000)
+                $targetAmount = rand(30, 120) * 100;
+                Target::create([
+                    'user_id' => $user->id,
+                    'target_amount' => $targetAmount,
+                ]);
+
+                // Create 2 to 5 random sales entries for user
+                $numSales = rand(2, 5);
+                for ($j = 1; $j <= $numSales; $j++) {
+                    $saleAmount = rand(5, 40) * 100;
+                    $day = rand(1, 28);
+                    $month = rand(6, 7); // June or July
+                    $date = sprintf('2026-%02d-%02d', $month, $day);
+
+                    Sale::create([
+                        'user_id' => $user->id,
+                        'amount' => $saleAmount,
+                        'date' => $date,
+                    ]);
+                }
+
+                // Explicitly seed some sales to guarantee top performers exist for yesterday, last week, and last month
+                // Yesterday (2026-07-24)
+                if ($i == 3) {
+                    Sale::create([
+                        'user_id' => $user->id,
+                        'amount' => rand(1500, 3000),
+                        'date' => '2026-07-24',
+                    ]);
+                }
+                // Last Week (e.g. 2026-07-15)
+                if ($i == 7) {
+                    Sale::create([
+                        'user_id' => $user->id,
+                        'amount' => rand(4000, 6000),
+                        'date' => '2026-07-15',
+                    ]);
+                }
+                // Last Month (e.g. 2026-06-15)
+                if ($i == 12) {
+                    Sale::create([
+                        'user_id' => $user->id,
+                        'amount' => rand(7000, 10000),
+                        'date' => '2026-06-15',
+                    ]);
+                }
             }
         }
     }

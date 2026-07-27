@@ -18,13 +18,9 @@ class DepartmentController extends Controller
                             <a href="' . route('departments.edit', $dept->id) . '" class="btn btn-sm btn-outline-info" title="Edit">
                                 <i class="fa-solid fa-pencil"></i>
                             </a>
-                            <form action="' . route('departments.destroy', $dept->id) . '" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this department? All associated users will remain but without a department assigned.\');" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-url="' . route('departments.destroy', $dept->id) . '" data-table-id="#departmentsTable" data-confirm="Are you sure you want to delete this department? All associated users will remain but without a department assigned." title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
                         </div>
                     ';
                 })
@@ -69,6 +65,10 @@ class DepartmentController extends Controller
     public function destroy(Department $department)
     {
         $department->delete();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => 'Department deleted successfully.']);
+        }
         return redirect()->route('departments.index')->with('success', 'Department deleted successfully.');
     }
 }

@@ -18,6 +18,12 @@ class NoticeController extends Controller
                     }
                     return '<span class="text-secondary small">No Image</span>';
                 })
+                ->addColumn('status', function ($notice) {
+                    if ($notice->is_active) {
+                        return '<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2.5 py-1">Active</span>';
+                    }
+                    return '<span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-2.5 py-1">Inactive</span>';
+                })
                 ->addColumn('formatted_date', function ($notice) {
                     return $notice->created_at->format('M d, Y H:i');
                 })
@@ -27,17 +33,13 @@ class NoticeController extends Controller
                             <a href="' . route('notices.edit', $notice->id) . '" class="btn btn-sm btn-outline-info" title="Edit">
                                 <i class="fa-solid fa-pencil"></i>
                             </a>
-                            <form action="' . route('notices.destroy', $notice->id) . '" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this notice?\');" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-url="' . route('notices.destroy', $notice->id) . '" data-table-id="#noticesTable" data-confirm="Are you sure you want to delete this notice?" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
                         </div>
                     ';
                 })
-                ->rawColumns(['image', 'actions'])
+                ->rawColumns(['image', 'actions', 'status'])
                 ->make(true);
         }
         return view('notices.index');
@@ -68,6 +70,7 @@ class NoticeController extends Controller
             'title' => $request->title,
             'content' => $request->content,
             'image_path' => $imagePath,
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
         return redirect()->route('notices.index')->with('success', 'Notice posted successfully.');
@@ -101,6 +104,7 @@ class NoticeController extends Controller
             'title' => $request->title,
             'content' => $request->content,
             'image_path' => $imagePath,
+            'is_active' => $request->boolean('is_active'),
         ]);
 
         return redirect()->route('notices.index')->with('success', 'Notice updated successfully.');
@@ -113,6 +117,10 @@ class NoticeController extends Controller
         }
 
         $notice->delete();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => 'Notice deleted successfully.']);
+        }
         return redirect()->route('notices.index')->with('success', 'Notice deleted successfully.');
     }
 }

@@ -28,13 +28,9 @@ class TargetController extends Controller
                             <a href="' . route('targets.edit', $target->id) . '" class="btn btn-sm btn-outline-info" title="Edit">
                                 <i class="fa-solid fa-pencil"></i>
                             </a>
-                            <form action="' . route('targets.destroy', $target->id) . '" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this target?\');" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-url="' . route('targets.destroy', $target->id) . '" data-table-id="#targetsTable" data-confirm="Are you sure you want to delete this target?" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
                         </div>
                     ';
                 })
@@ -101,6 +97,10 @@ class TargetController extends Controller
     public function destroy(Target $target)
     {
         $target->delete();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => 'Target deleted successfully.']);
+        }
         return redirect()->route('targets.index')->with('success', 'Target deleted successfully.');
     }
 }

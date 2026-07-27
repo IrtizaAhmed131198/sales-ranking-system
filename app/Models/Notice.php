@@ -9,5 +9,5 @@ class Notice extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'content', 'image_path'];
+    protected $fillable = ['title', 'content', 'image_path', 'is_active'];
 }

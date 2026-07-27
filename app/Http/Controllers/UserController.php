@@ -26,6 +26,12 @@ class UserController extends Controller
                 ->addColumn('benchmark_name', function ($user) {
                     return $user->benchmark ? $user->benchmark->name : 'No Benchmark';
                 })
+                ->addColumn('status', function ($user) {
+                    if ($user->is_active) {
+                        return '<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2.5 py-1">Active</span>';
+                    }
+                    return '<span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-2.5 py-1">Inactive</span>';
+                })
                 ->addColumn('created_date', function ($user) {
                     return $user->created_at ? $user->created_at->format('M d, Y') : '';
                 })
@@ -35,17 +41,13 @@ class UserController extends Controller
                             <a href="' . route('users.edit', $user->id) . '" class="btn btn-sm btn-outline-info" title="Edit">
                                 <i class="fa-solid fa-pencil"></i>
                             </a>
-                            <form action="' . route('users.destroy', $user->id) . '" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this salesperson? All their targets and sales history will also be permanently deleted.\');" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-url="' . route('users.destroy', $user->id) . '" data-table-id="#usersTable" data-confirm="Are you sure you want to delete this salesperson? All their targets and sales history will also be permanently deleted." title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
                         </div>
                     ';
                 })
-                ->rawColumns(['photo', 'actions'])
+                ->rawColumns(['photo', 'actions', 'status'])
                 ->make(true);
         }
         return view('users.index');
@@ -86,6 +88,7 @@ class UserController extends Controller
             'role_id' => $request->role_id,
             'image_path' => $imagePath,
             'is_admin' => false,
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
         return redirect()->route('users.index')->with('success', 'Salesperson created successfully.');
@@ -136,6 +139,7 @@ class UserController extends Controller
             'benchmark_id' => $request->benchmark_id,
             'role_id' => $request->role_id,
             'image_path' => $imagePath,
+            'is_active' => $request->boolean('is_active'),
         ]);
 
         return redirect()->route('users.index')->with('success', 'Salesperson updated successfully.');
@@ -152,6 +156,10 @@ class UserController extends Controller
         }
 
         $user->delete();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => 'Salesperson deleted successfully.']);
+        }
         return redirect()->route('users.index')->with('success', 'Salesperson deleted successfully.');
     }
 }

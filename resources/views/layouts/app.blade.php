@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name', 'Sales Performance') }} - Admin Portal</title>
-    
+
     <!-- Google Fonts (Outfit) -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
+
     <!-- DataTables Bootstrap 5 CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
-    
+
     <link rel="stylesheet" href="{{('assets/css/style.css')}}">
-    
+
     <style>
         :root {
             --bg-primary: #0b0f19;
@@ -292,7 +292,7 @@
         </a>
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->is('/') || request()->is('dashboard*') ? 'active' : '' }}">
+                <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->is('admin') || request()->is('dashboard*') ? 'active' : '' }}">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>Dashboard</span>
                 </a>
@@ -393,12 +393,43 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <script>
         $(document).ready(function() {
             // Mobile Sidebar Toggle
             $('#sidebar-toggle').click(function() {
                 $('.sidebar').toggleClass('active');
+            });
+
+            // Global AJAX Delete Event Handler for DataTables
+            $(document).on('click', '.delete-btn', function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation(); // 🔥 this is key fix
+
+                var button = $(this);
+                var url = button.data('url');
+                var tableId = button.data('table-id');
+                var confirmMsg = button.data('confirm') || 'Are you sure?';
+
+                console.log('clicked'); // debug
+
+                // if (confirm(confirmMsg)) {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: {
+                            _method: 'DELETE',
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (tableId && $.fn.DataTable.isDataTable(tableId)) {
+                                $(tableId).DataTable().ajax.reload(null, false);
+                            } else {
+                                window.location.reload();
+                            }
+                        }
+                    });
+                // }
             });
         });
     </script>

@@ -31,13 +31,9 @@ class SalesController extends Controller
                             <a href="' . route('sales.edit', $sale->id) . '" class="btn btn-sm btn-outline-info" title="Edit">
                                 <i class="fa-solid fa-pencil"></i>
                             </a>
-                            <form action="' . route('sales.destroy', $sale->id) . '" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this sales entry?\');" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-url="' . route('sales.destroy', $sale->id) . '" data-table-id="#salesTable" data-confirm="Are you sure you want to delete this sales entry?" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
                         </div>
                     ';
                 })
@@ -88,6 +84,10 @@ class SalesController extends Controller
     public function destroy(Sale $sale)
     {
         $sale->delete();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => 'Sales entry deleted successfully.']);
+        }
         return redirect()->route('sales.index')->with('success', 'Sales entry deleted successfully.');
     }
 }

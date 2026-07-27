@@ -1,0 +1,544 @@
+body {
+    font-family: Lufga-Regular;
+}
+
+@font-face {
+    font-family: Lufga-Regular;
+    src: url("../fonts/Lufga-SemiBold.otf");
+}
+@font-face {
+    font-family: Lufga-light;
+    src: url("../fonts/Lufga-Regular.otf");
+}
+
+span {
+    font-family: Lufga-light;
+}
+
+.progress-container {
+    height: 0.6rem;
+    width: 100%;
+    border-radius: 0.4rem;
+    background: #000;
+    position: relative;
+    margin-top: 31px;
+}
+
+.progress-container .progress {
+    height: 100%;
+    width: 0;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    transition: width 0.4s ease;
+}
+
+.progress-container .progress1 {
+    height: 100%;
+    width: 0;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    transition: width 0.4s ease;
+}
+
+.progress-container .progress2 {
+    height: 100%;
+    width: 0;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    transition: width 0.4s ease;
+}
+
+.progress-container .progress3 {
+    height: 100%;
+    width: 0;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    transition: width 0.4s ease;
+}
+
+.progress-container .progress4 {
+    height: 100%;
+    width: 0;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    transition: width 0.4s ease;
+}
+.progress-container .progress5 {
+    height: 100%;
+    width: 0;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    transition: width 0.4s ease;
+}
+
+.progress-container .progress6 {
+    height: 100%;
+    width: 0;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    transition: width 0.4s ease;
+}
+.progress-container .progress7 {
+    height: 100%;
+    width: 0;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    transition: width 0.4s ease;
+}
+
+.progress-container .progress8 {
+    height: 100%;
+    width: 0;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    transition: width 0.4s ease;
+}
+
+.progress-container .progress9 {
+    height: 100%;
+    width: 0;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    transition: width 0.4s ease;
+}
+
+.progress-container .progress10 {
+    height: 100%;
+    width: 0;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    transition: width 0.4s ease;
+}
+.progress-container .progress11 {
+    height: 100%;
+    width: 0;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    transition: width 0.4s ease;
+}
+
+.leaderboard {
+    max-width: 1100px;
+    margin: 0px auto 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #4721a5;
+}
+
+.sales-table {
+    margin: 0;
+}
+
+.sales-table thead {
+    background-color: #4b007d !important;
+}
+
+.sales-table thead th {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 10px 15px;
+    border: none;
+    background-color: transparent !important;
+}
+
+.sales-table tbody tr {
+    background: #ececec;
+    border-bottom: 3px solid #1b1638;
+}
+
+.sales-table tbody td {
+    vertical-align: middle;
+    padding: 3.7px 11px;
+    color: #555555;
+    font-size: 12px;
+    font-weight: 300;
+}
+
+.profile-img,
+.profile-placeholder {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    object-fit: cover;
+    background: #bcd8e5;
+}
+
+.progress-wrapper {
+    width: 120px;
+}
+
+.percent {
+    display: block;
+    text-align: right;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.progress {
+    height: 5px;
+    background: #ddd;
+    border-radius: 50px;
+}
+
+.progress-bar {
+    border-radius: 50px;
+}
+
+.green {
+    color: #00c853;
+}
+.cyan {
+    color: #00c8d7;
+}
+.blue {
+    color: #00b8ff;
+}
+.yellow {
+    color: #ffb300;
+}
+.orange {
+    color: #ff5a1f;
+}
+
+.table > :not(caption) > * > * {
+    border-bottom-width: 0 !important;
+}
+section.sec-main {
+    height: 100vh;
+    background-image: url(../images/bg.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding-top: 0px;
+}
+
+header {
+    background: url(../images/header.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 84px;
+    padding: 10px 0px;
+    margin-bottom: 41px;
+}
+.custom-nav {
+    text-align: center;
+    /* padding: 10px 0px; */
+}
+
+.custom-nav img {
+    width: 193px;
+}
+
+.performer-box {
+    background: url(../images/left-slid.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    border-radius: 10px;
+    padding: 20px 20px;
+    width: 100%;
+    /* margin-top: 10px; */
+    position: relative;
+    height: 361px;
+    align-items: center;
+}
+
+.goft-box {
+    background-image: url(../images/gift-box.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    border-radius: 10px;
+    padding: 20px 20px;
+    width: 100%;
+    position: relative;
+    margin-top: 0px;
+    height: 361px;
+}
+
+thead {
+}
+
+.sales-table thead tr {
+    background-color: #4b007d !important;
+}
+
+.team-box {
+    text-align: center;
+    margin: 6.5px 2px;
+    padding: 13px 10px;
+    border-radius: 10px;
+    background: linear-gradient(181deg, #6b0187 38%, #24066e 100%);
+}
+
+.team-box h3 {
+    color: white;
+    margin-bottom: 7px;
+    text-transform: uppercase;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 51px;
+    margin-bottom: 0px;
+}
+
+.team-box h4 {
+    color: white;
+    text-transform: uppercase;
+    margin-bottom: 0px;
+    font-size: 26px;
+}
+
+.team-box h4 span {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    font-weight: 700;
+}
+
+section.sec-main .container-fluid {
+    max-width: 1588px;
+}
+
+.leaderboard h4 {
+    color: white;
+    padding-left: 10px;
+    font-size: 17px;
+    padding-top: 11px;
+    background: black;
+    padding-bottom: 11px;
+    margin-bottom: 0px;
+}
+
+.perform-con h2 {
+    color: #f0bd0a;
+    text-align: start;
+    margin-bottom: 0px;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 33px;
+    /* line-height: 31px; */
+    text-shadow: -1px 6px 4px black;
+}
+
+.perform-con h2 span {
+    font-size: 18px;
+    display: block;
+    color: #ef5329;
+    text-shadow: none;
+    margin-top: -4px;
+}
+
+.perform-con h3 {
+    color: white;
+    font-size: 22px;
+    text-shadow: -1px 6px 4px black;
+    margin: 7px 0px;
+}
+
+.perform-con h3 span {
+    display: block;
+    color: #eebc0a;
+    font-size: 16px;
+    text-shadow: none;
+}
+
+.perform-con {
+    width: 70%;
+}
+
+.rating {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin: 6px 0px;
+}
+
+.rating i {
+    color: #f0bd0a;
+}
+
+.rating p {
+    color: white;
+    font-size: 12px;
+    margin-bottom: 0px;
+    font-family: "Lufga-light";
+}
+
+.gift-cont h4 {
+    color: white;
+    text-shadow: -1px 6px 10px black;
+    font-size: 53px;
+    font-family: "Bebas Neue";
+    line-height: 52px;
+}
+
+.gift-cont {
+    width: 70%;
+}
+
+.gift-box img {
+}
+.gift-img {
+    position: absolute;
+    right: 0px;
+    bottom: 17px;
+    z-index: 0;
+}
+
+.gift-img img {
+    width: 270px;
+}
+
+.gift-cont p {
+    color: white;
+    font-size: 12px;
+    width: 72%;
+    margin-bottom: 14px;
+}
+
+.golden {
+    /* background: aquamarine; */
+    padding: 5px 15px;
+    border-radius: 35px;
+    background: linear-gradient(138deg, #eed0a9, #bd8c5f);
+    text-shadow: -1px 2px 4px black;
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+    border: 3px solid #dbb085;
+    letter-spacing: 1px;
+    font-size: 15px;
+}
+
+.gift-cont h2 {
+    color: white;
+    font-size: 22px;
+    text-shadow: -1px 6px 4px black;
+    margin-top: 15px;
+}
+.imgsa {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    width: 40% !important;
+    height: 260px !important;
+}
+
+.imgsa img {
+    width: 235px;
+}
+.team-box.two {
+    background: linear-gradient(181deg, #4c68f9 14%, #6d18d8 100%);
+}
+
+.team-box.four {
+    background: linear-gradient(181deg, #e87a05 19%, #e03d01 100%);
+}
+
+.team-box.three {
+    background: linear-gradient(181deg, #2416cf 17%, #340491 100%);
+}
+
+.performer-slider {
+    width: 100%;
+    height: 369px; /* apne card ki height */
+}
+
+.performer-slider .swiper-slide {
+    display: flex;
+    align-items: center;
+}
+
+.performer-slider2 {
+    width: 100%;
+    height: 800px; /* apne card ki height */
+}
+
+.performer-slider7 {
+    width: 100%;
+    height: 369px; /* apne card ki height */
+    margin-top: 15px;
+}
+
+.performer-slider7 .swiper-slide {
+    display: flex;
+    align-items: center;
+}
+
+h3.green {
+    color: #f0bd0a;
+    font-size: 30px;
+    margin-bottom: 4px;
+    text-shadow: none;
+}
+
+h3.green span {
+    color: white;
+    font-size: 15px;
+}
+
+h3.bluew {
+    color: #f0bd0a;
+    font-size: 30px;
+    text-shadow: none;
+}
+
+h3.bluew span {
+    color: white;
+    font-size: 15px;
+}
+
+.team-box-main {
+    background: black;
+    padding: 0px 10px;
+    border-radius: 10px;
+    border: 3px solid #262672;
+}
+
+.progress-container p {
+    position: absolute;
+    top: -28px;
+    margin-bottom: 0px;
+    right: 55px;
+    color: white;
+    font-weight: 500;
+    font-size: 21px;
+}
+
+.progress-container p span {
+    font-size: 12px;
+}
+
+@media only screen and (max-width: 1440px) {
+    header {
+        margin-bottom: 26px;
+    }
+
+    .sales-table tbody td {
+        font-size: 12px;
+        padding: 3.7px 5px;
+    }
+
+    .sales-table thead th {
+        padding: 10px 6px;
+    }
+
+    .team-box {
+        padding: 11px 10px;
+    }
+
+    .leaderboard {
+        margin: 0px auto 12px;
+    }
+
+    .performer-slider7 {
+        margin-top: 5px;
+        height: 376px;
+    }
+
+    .goft-box {
+        height: 367px;
+    }
+}

@@ -23,6 +23,7 @@
                             <th>Title</th>
                             <th>Announcement Content</th>
                             <th>Posted At</th>
+                            <th>Status</th>
                             <th class="text-end" style="width: 150px;">Actions</th>
                         </tr>
                     </thead>
@@ -50,11 +51,12 @@
                     return data.length > 80 ? data.substr(0, 80) + '...' : data;
                 }},
                 { data: 'formatted_date', name: 'created_at', className: 'text-secondary small' },
+                { data: 'status', name: 'is_active', orderable: true },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-end' }
             ],
             pageLength: 10,
             ordering: true,
-            order: [[4, "desc"]] // Show newest notices first (index 4 is Posted At now)
+            order: [[4, "desc"]] // Sort by Posted At
         });
     });
 </script>

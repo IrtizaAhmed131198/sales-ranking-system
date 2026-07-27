@@ -18,13 +18,9 @@ class RoleController extends Controller
                             <a href="' . route('roles.edit', $role->id) . '" class="btn btn-sm btn-outline-info" title="Edit">
                                 <i class="fa-solid fa-pencil"></i>
                             </a>
-                            <form action="' . route('roles.destroy', $role->id) . '" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this role? Associated salespersons will have their role reset to none.\');" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-url="' . route('roles.destroy', $role->id) . '" data-table-id="#rolesTable" data-confirm="Are you sure you want to delete this role? Associated salespersons will have their role reset to none." title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
                         </div>
                     ';
                 })
@@ -69,6 +65,10 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         $role->delete();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => 'Role deleted successfully.']);
+        }
         return redirect()->route('roles.index')->with('success', 'Role deleted successfully.');
     }
 }

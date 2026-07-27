@@ -25,6 +25,7 @@
                             <th>Benchmark</th>
                             <th>Department</th>
                             <th>Role</th>
+                            <th>Status</th>
                             <th>Created At</th>
                             <th class="text-end" style="width: 150px;">Actions</th>
                         </tr>
@@ -62,6 +63,7 @@
                 { data: 'role_name', name: 'role.name', render: function(data) {
                     return '<span class="badge bg-danger bg-opacity-20 text-danger text-white border border-danger border-opacity-30 px-2.5 py-1.5">' + data + '</span>';
                 }},
+                { data: 'status', name: 'is_active', orderable: true },
                 { data: 'created_date', name: 'created_at', className: 'text-secondary small' },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-end' }
             ],

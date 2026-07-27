@@ -12,6 +12,11 @@ use App\Http\Controllers\BenchmarkController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\NoticeController;
 
+use App\Http\Controllers\HomeController;
+
+// Public landing page
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
 // Authentication routes
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
@@ -19,7 +24,7 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 // Protected admin routes
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('admin', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard', [DashboardController::class, 'index']);
 
     Route::resource('users', UserController::class);

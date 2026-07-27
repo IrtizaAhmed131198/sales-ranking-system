@@ -18,13 +18,9 @@ class BenchmarkController extends Controller
                             <a href="' . route('benchmarks.edit', $bm->id) . '" class="btn btn-sm btn-outline-info" title="Edit">
                                 <i class="fa-solid fa-pencil"></i>
                             </a>
-                            <form action="' . route('benchmarks.destroy', $bm->id) . '" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this benchmark? Associated salespersons will have their benchmark reset to none.\');" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-url="' . route('benchmarks.destroy', $bm->id) . '" data-table-id="#benchmarksTable" data-confirm="Are you sure you want to delete this benchmark? Associated salespersons will have their benchmark reset to none." title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
                         </div>
                     ';
                 })
@@ -69,6 +65,10 @@ class BenchmarkController extends Controller
     public function destroy(Benchmark $benchmark)
     {
         $benchmark->delete();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => 'Benchmark deleted successfully.']);
+        }
         return redirect()->route('benchmarks.index')->with('success', 'Benchmark deleted successfully.');
     }
 }

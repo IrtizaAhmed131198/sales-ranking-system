@@ -45,6 +45,11 @@
                     @enderror
                 </div>
 
+                <div class="form-check form-switch mb-4">
+                    <input class="form-check-input" type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', $notice->is_active) ? 'checked' : '' }}>
+                    <label class="form-check-label text-secondary small" for="is_active">Active Status</label>
+                </div>
+
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary px-4">
                         Update Notice
