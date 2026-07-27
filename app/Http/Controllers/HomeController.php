@@ -30,7 +30,7 @@ class HomeController extends Controller
                 : 0;
 
             return $dept;
-        })->sortByDesc('total_sales_sum')->values();
+        })->sortByDesc('dept_performance_percentage')->values();
 
         // 2. Fetch leaderboards grouped by benchmark (each slide contains both roles stacked)
         $benchmarks = \App\Models\Benchmark::all()->sortByDesc(function ($bm) {
