@@ -9,7 +9,11 @@ class Department extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'head_name'];
+    protected $fillable = ['name', 'head_name', 'target'];
+
+    protected $casts = [
+        'target' => 'decimal:2',
+    ];
 
     public function users()
     {

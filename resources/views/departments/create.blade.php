@@ -14,10 +14,18 @@
         <div class="card-body p-4">
             <form action="{{ route('departments.store') }}" method="POST">
                 @csrf
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="name" class="form-label text-secondary small">Department Name</label>
                     <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required autofocus placeholder="e.g. Enterprise Sales">
                     @error('name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="target" class="form-label text-secondary small">Department Target ($) <span class="text-muted">(optional)</span></label>
+                    <input type="number" step="0.01" name="target" id="target" class="form-control @error('target') is-invalid @enderror" value="{{ old('target') }}" placeholder="e.g. 500000.00" min="0">
+                    @error('target')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

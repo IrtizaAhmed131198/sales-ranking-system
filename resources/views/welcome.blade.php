@@ -13,6 +13,21 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
     <style>
+        @keyframes slideUpFade {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-update {
+            opacity: 0;
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+        }
+
         /* Ensure progress bars respect dynamic database width */
         .progress,
         .progress1,
@@ -83,37 +98,19 @@
                             @php
                                 $boxClass = $boxClasses[$index % 4];
                                 $progressClass = $progressClasses[$index % 4];
-                                $sliderClass = 'performer-slider' . ($index + 3);
+                                $pct = $dept->dept_performance_percentage;
                             @endphp
-                            <div class="swiper {{ $sliderClass }} mb-3" style="height: auto;">
-                                <div class="swiper-wrapper">
-                                    @forelse($dept->top_sellers as $seller)
-                                        <div class="swiper-slide">
-                                            <div class="team-box {{ $boxClass }}">
-                                                <h3>{{ strtoupper($dept->name) }}</h3>
-                                                <h4>{{ $seller->name }} <span>({{ $seller->role->name ?? 'Salesperson' }})</span> </h4>
-                                                <div class="progress-container">
-                                                    <p>{{ $seller->performance_percentage }}% <span>Achieved</span> </p>
-                                                    <div class="{{ $progressClass }}"
-                                                        style="width: {{ min($seller->performance_percentage, 100) }}%; background-color: #fff !important;">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @empty
-                                        <div class="swiper-slide">
-                                            <div class="team-box {{ $boxClass }}">
-                                                <h3>{{ strtoupper($dept->name) }}</h3>
-                                                <h4>{{ $dept->head_name ?? 'N/A' }} <span>(Business Unit Head)</span> </h4>
-                                                <div class="progress-container">
-                                                    <p>0% <span>Achieved</span> </p>
-                                                    <div class="{{ $progressClass }}"
-                                                        style="width: 0%; background-color: #fff !important;">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforelse
+                            <div class="team-box {{ $boxClass }} mb-3">
+                                <h3>{{ strtoupper($dept->name) }}</h3>
+                                <h4>
+                                    ${{ number_format($dept->total_sales_sum) }}
+                                    <span>of ${{ number_format($dept->total_target_sum) }} Target</span>
+                                </h4>
+                                <div class="progress-container">
+                                    <p>{{ $pct }}% <span>Achieved</span></p>
+                                    <div class="{{ $progressClass }}"
+                                         style="width: {{ min($pct, 100) }}%; background-color: #fff !important;">
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -308,6 +305,15 @@
                     const newMain = doc.querySelector('.sec-main');
                     if (oldMain && newMain) {
                         oldMain.innerHTML = newMain.innerHTML;
+
+                        // Apply a smooth staggered slide-up entry animation to all updated sections
+                        const elementsToAnimate = oldMain.querySelectorAll('.team-box-main, .performer-slider3, .goft-box, .sales-table tbody tr, .leader-box');
+                        elementsToAnimate.forEach((el, index) => {
+                            el.style.opacity = '0';
+                            setTimeout(() => {
+                                el.classList.add('animate-update');
+                            }, index * 50); // Stagger delay of 50ms per item
+                        });
 
                         // Re-initialize swiper sliders using the globally registered lifecycle method
                         if (typeof window.initAllSliders === 'function') {

@@ -38,10 +38,11 @@ class DepartmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:departments,name',
+            'name'   => 'required|string|max:255|unique:departments,name',
+            'target' => 'nullable|numeric|min:0',
         ]);
 
-        Department::create($request->only('name'));
+        Department::create($request->only('name', 'target'));
 
         return redirect()->route('departments.index')->with('success', 'Department created successfully.');
     }
@@ -54,10 +55,11 @@ class DepartmentController extends Controller
     public function update(Request $request, Department $department)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:departments,name,' . $department->id,
+            'name'   => 'required|string|max:255|unique:departments,name,' . $department->id,
+            'target' => 'nullable|numeric|min:0',
         ]);
 
-        $department->update($request->only('name'));
+        $department->update($request->only('name', 'target'));
 
         return redirect()->route('departments.index')->with('success', 'Department updated successfully.');
     }

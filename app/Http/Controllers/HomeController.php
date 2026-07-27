@@ -16,29 +16,19 @@ class HomeController extends Controller
         $departments = Department::with(['users' => function ($q) {
             $q->where('is_active', true);
         }, 'users.sales'])->get()->map(function ($dept) {
-            $dept->total_sales_sum = 0;
+            $dept->total_sales_sum  = 0;
+            $dept->total_target_sum = (float) ($dept->target ?? 0);
+
             foreach ($dept->users as $user) {
                 if (!$user->is_admin) {
                     $dept->total_sales_sum += $user->sales->sum('amount');
                 }
             }
 
-            $dept->top_sellers = User::where('is_admin', false)
-                ->where('is_active', true)
-                ->where('department_id', $dept->id)
-                ->with(['targets', 'sales', 'role'])
-                ->get()
-                ->map(function ($user) {
-                    $user->total_target = $user->targets->sum('target_amount');
-                    $user->total_sales = $user->sales->sum('amount');
-                    $user->performance_percentage = $user->total_target > 0
-                        ? round(($user->total_sales / $user->total_target) * 100, 2)
-                        : 0;
-                    return $user;
-                })
-                ->sortByDesc('performance_percentage')
-                ->take(3)
-                ->values();
+            $dept->dept_performance_percentage = $dept->total_target_sum > 0
+                ? round(($dept->total_sales_sum / $dept->total_target_sum) * 100, 2)
+                : 0;
+
             return $dept;
         })->sortByDesc('total_sales_sum')->values();
 
