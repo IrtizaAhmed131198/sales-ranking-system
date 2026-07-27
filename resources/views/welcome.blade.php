@@ -102,7 +102,7 @@
                             @endphp
                             <div class="team-box {{ $boxClass }} mb-3">
                                 <h3>{{ strtoupper($dept->name) }}</h3>
-                                {{-- <h4>${{ number_format($dept->total_sales_sum) }}</h4> --}}
+                                <h4>{{ strtoupper($dept->head_name) }}</h4>
                                 <div class="progress-container">
                                     <p>{{ $pct }}% <span>Achieved</span></p>
                                     <div class="{{ $progressClass }}"

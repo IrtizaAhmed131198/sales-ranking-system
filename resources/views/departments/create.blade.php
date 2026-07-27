@@ -22,6 +22,14 @@
                     @enderror
                 </div>
 
+                <div class="mb-3">
+                    <label for="head_name" class="form-label text-secondary small">Head Name</label>
+                    <input type="text" name="head_name" id="head_name" class="form-control @error('head_name') is-invalid @enderror" value="{{ old('head_name') }}" required placeholder="e.g. John Doe">
+                    @error('head_name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <div class="mb-4">
                     <label for="target" class="form-label text-secondary small">Department Target ($) <span class="text-muted">(optional)</span></label>
                     <input type="number" step="0.01" name="target" id="target" class="form-control @error('target') is-invalid @enderror" value="{{ old('target') }}" placeholder="e.g. 500000.00" min="0">

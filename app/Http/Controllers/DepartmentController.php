@@ -39,10 +39,11 @@ class DepartmentController extends Controller
     {
         $request->validate([
             'name'   => 'required|string|max:255|unique:departments,name',
+            'head_name' => 'required|string|max:255',
             'target' => 'nullable|numeric|min:0',
         ]);
 
-        Department::create($request->only('name', 'target'));
+        Department::create($request->only('name', 'target', 'head_name'));
 
         return redirect()->route('departments.index')->with('success', 'Department created successfully.');
     }
@@ -57,9 +58,10 @@ class DepartmentController extends Controller
         $request->validate([
             'name'   => 'required|string|max:255|unique:departments,name,' . $department->id,
             'target' => 'nullable|numeric|min:0',
+            'head_name' => 'required|string|max:255',
         ]);
 
-        $department->update($request->only('name', 'target'));
+        $department->update($request->only('name', 'target', 'head_name'));
 
         return redirect()->route('departments.index')->with('success', 'Department updated successfully.');
     }

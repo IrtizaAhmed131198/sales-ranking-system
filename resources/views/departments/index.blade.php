@@ -20,6 +20,7 @@
                         <tr>
                             <th style="width: 80px;">ID</th>
                             <th>Department Name</th>
+                            <th>Head Name</th>
                             <th class="text-center">Total Salespersons</th>
                             <th class="text-end" style="width: 150px;">Actions</th>
                         </tr>
@@ -43,6 +44,7 @@
             columns: [
                 { data: 'id', name: 'id', render: function(data) { return '#' + data; } },
                 { data: 'name', name: 'name', className: 'fw-semibold' },
+                { data: 'head_name', name: 'head_name', className: 'fw-semibold' },
                 { data: 'users_count', name: 'users_count', searchable: false, className: 'text-center', render: function(data) {
                     return '<span class="badge bg-secondary px-2.5 py-1.5">' + data + '</span>';
                 }},
