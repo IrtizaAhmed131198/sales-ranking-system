@@ -449,6 +449,8 @@ section.sec-main .container-fluid {
 .performer-slider .swiper-slide {
     display: flex;
     align-items: center;
+    position: relative;
+    z-index: 0;
 }
 
 .performer-slider2 {
@@ -542,3 +544,5 @@ h3.bluew span {
         height: 367px;
     }
 }
+
+
