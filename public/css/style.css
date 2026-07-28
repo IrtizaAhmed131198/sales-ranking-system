@@ -147,6 +147,10 @@ span {
     border-bottom: 3px solid #1b1638;
 }
 
+.sales-table tbody tr:nth-child(even) td {
+    background: #C4C2C2;
+}
+
 .sales-table tbody td {
     vertical-align: middle;
     padding: 7.4px 11px;
