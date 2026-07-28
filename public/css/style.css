@@ -198,6 +198,10 @@ span {
 .blue {
     color: #00b8ff;
 }
+.sales-table .percent {
+    color: #555555;
+}
+
 .yellow {
     color: #ffb300;
 }

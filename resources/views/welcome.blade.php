@@ -169,7 +169,7 @@
                                                                 <td>${{ number_format($sp->total_sales) }}</td>
                                                                 <td>
                                                                     <div class="progress-wrapper">
-                                                                        <span class="percent {{ $percentClass }}">{{ $sp->performance_percentage }}%</span>
+                                                                        <span class="percent {{ $percentClass }}">{{ $sp->performance_percentage }} <b>%</b> </span>
                                                                         <div class="progress">
                                                                             <div class="progress-bar {{ $barColor }}" style="width: {{ min($sp->performance_percentage, 100) }}%;"></div>
                                                                         </div>
