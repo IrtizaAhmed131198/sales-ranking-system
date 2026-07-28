@@ -122,7 +122,7 @@ span {
     margin: 0px auto 20px;
     border-radius: 12px;
     overflow: hidden;
-    border: 2px solid #4721a5;
+    border: 2px solid #ece1e1;
 }
 
 .sales-table {
@@ -144,7 +144,7 @@ span {
 
 .sales-table tbody tr {
     background: #ececec;
-    border-bottom: 3px solid #1b1638;
+    border-bottom: 2px solid #1b1638;
 }
 
 .sales-table tbody tr:nth-child(even) td {
@@ -500,7 +500,7 @@ h3.bluew span {
     background: black;
     padding: 0px 10px;
     border-radius: 10px;
-    border: 3px solid #262672;
+    border: 3px solid #ece1e1;
 }
 
 .progress-container p {
