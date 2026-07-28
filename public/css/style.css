@@ -149,7 +149,7 @@ span {
 
 .sales-table tbody td {
     vertical-align: middle;
-    padding: 3.7px 11px;
+    padding: 7.4px 11px;
     color: #555555;
     font-size: 12px;
     font-weight: 300;
@@ -270,7 +270,7 @@ thead {
 .team-box {
     text-align: center;
     margin: 6.5px 2px;
-    padding: 13px 10px;
+    padding: 18px 10px;
     border-radius: 10px;
     background: linear-gradient(181deg, #6b0187 38%, #24066e 100%);
 }
