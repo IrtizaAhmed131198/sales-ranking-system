@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Benchmark;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class BenchmarkController extends Controller
 {
@@ -12,6 +13,8 @@ class BenchmarkController extends Controller
         if ($request->ajax()) {
             $benchmarks = Benchmark::withCount('users');
             return \Yajra\DataTables\Facades\DataTables::of($benchmarks)
+                ->editColumn('front_sale_value', fn ($bm) => number_format($bm->front_sale_value, 2))
+                ->editColumn('upsell_value', fn ($bm) => number_format($bm->upsell_value, 2))
                 ->addColumn('actions', function ($bm) {
                     return '
                         <div class="d-flex justify-content-end gap-2">
@@ -39,9 +42,11 @@ class BenchmarkController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:benchmarks,name',
+            'front_sale_value' => 'required|numeric|min:0',
+            'upsell_value' => 'required|numeric|min:0',
         ]);
 
-        Benchmark::create($request->only('name'));
+        Benchmark::create($request->only('name', 'front_sale_value', 'upsell_value'));
 
         return redirect()->route('benchmarks.index')->with('success', 'Benchmark created successfully.');
     }
@@ -55,9 +60,11 @@ class BenchmarkController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:benchmarks,name,' . $benchmark->id,
+            'front_sale_value' => 'required|numeric|min:0',
+            'upsell_value' => 'required|numeric|min:0',
         ]);
 
-        $benchmark->update($request->only('name'));
+        $benchmark->update($request->only('name', 'front_sale_value', 'upsell_value'));
 
         return redirect()->route('benchmarks.index')->with('success', 'Benchmark updated successfully.');
     }

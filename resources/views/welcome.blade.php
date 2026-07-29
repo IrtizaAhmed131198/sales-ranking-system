@@ -18,11 +18,13 @@
                 opacity: 0;
                 transform: translateY(40px);
             }
+
             100% {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
+
         .animate-update {
             opacity: 0;
             animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
@@ -73,11 +75,11 @@
         <header>
             <div class="container">
                 <div class="row">
-                <div class="col-md-12">
-                    <div class="custom-nav">
-                    <img src="{{ asset('images/logo.png') }}" class="img-fluid">
+                    <div class="col-md-12">
+                        <div class="custom-nav">
+                            <img src="{{ asset('images/logo.png') }}" class="img-fluid">
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
         </header>
@@ -106,7 +108,7 @@
                                 <div class="progress-container">
                                     <p>{{ $pct }}% <span>Achieved</span></p>
                                     <div class="{{ $progressClass }}"
-                                         style="width: {{ min($pct, 100) }}%; background-color: #fff !important;">
+                                        style="width: {{ min($pct, 100) }}%; background-color: #fff !important;">
                                     </div>
                                 </div>
                             </div>
@@ -124,7 +126,10 @@
                                 <div class="swiper-slide">
                                     @foreach ($lb['tables'] as $tableIndex => $table)
                                         <div class="leaderboard {{ $tableIndex > 0 ? 'mt-3' : '' }}">
-                                            <h4>{{ strtoupper($table['role']->name) }} (Benchmark {{ $lb['benchmark']->name }})</h4>
+                                            <h4>
+                                                {{ strtoupper($table['role']->name) }}
+                                                (Benchmark {{ $lb['benchmark']->name }} - ${{ number_format($table['target_value']) }})
+                                            </h4>
                                             <div class="table-responsive">
                                                 <table class="table sales-table align-middle mb-0">
                                                     <thead>
@@ -161,17 +166,23 @@
                                                             @endphp
                                                             <tr>
                                                                 <td>
-                                                                    <img src="{{ $avatarUrl }}" class="profile-img" alt="">
+                                                                    <img src="{{ $avatarUrl }}" class="profile-img"
+                                                                        alt="">
                                                                 </td>
                                                                 <td>{{ strtoupper($sp->name) }}</td>
-                                                                <td>{{ strtoupper($sp->department->name ?? 'N/A') }}</td>
+                                                                <td>{{ strtoupper($sp->department->name ?? 'N/A') }}
+                                                                </td>
                                                                 <td>${{ number_format($sp->total_target) }}</td>
                                                                 <td>${{ number_format($sp->total_sales) }}</td>
                                                                 <td>
                                                                     <div class="progress-wrapper">
-                                                                        <span class="percent {{ $percentClass }}">{{ $sp->performance_percentage }} <b>%</b> </span>
+                                                                        <span
+                                                                            class="percent {{ $percentClass }}">{{ $sp->performance_percentage }}
+                                                                            <b>%</b> </span>
                                                                         <div class="progress">
-                                                                            <div class="progress-bar {{ $barColor }}" style="width: {{ min($sp->performance_percentage, 100) }}%;"></div>
+                                                                            <div class="progress-bar {{ $barColor }}"
+                                                                                style="width: {{ min($sp->performance_percentage, 100) }}%;">
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </td>
@@ -192,25 +203,25 @@
                 <!-- Right Column: Star Performer & Giveaways -->
                 <div class="col-md-4">
                     <div class="peroformer-main">
-                        
-                         
+
+
 
                         <div class="swiper performer-slider">
-                            
+
                             <div class="swiper-wrapper">
-                                
+
 
                                 @forelse($starPerformers as $index => $performer)
-                                
-                                
                                     <div class="swiper-slide">
-                                        
-                                        <div id="particles-js-{{$index}}"></div> 
-                                        
-                                     
+
+                                        <div id="particles-js-{{ $index }}"></div>
+
+
                                         <div class="performer-box">
                                             <div class="perform-con">
-                                                <h2>{{ $performer->category_label }} <span>TEAM {{ strtoupper($performer->department->name ?? 'N/A') }}IANS</span></h2>
+                                                <h2>{{ $performer->category_label }} <span>TEAM
+                                                        {{ strtoupper($performer->department->name ?? 'N/A') }}IANS</span>
+                                                </h2>
                                                 <h3>{{ strtoupper($performer->name) }}
                                                     <span>{{ strtoupper($performer->role->name ?? 'Salesperson') }}</span>
                                                 </h3>
@@ -227,9 +238,11 @@
                                                 </div>
 
                                                 <h3 class="green">${{ number_format($performer->total_target) }}
-                                                    <span>BENCHMARK TARGET</span> </h3>
+                                                    <span>BENCHMARK TARGET</span>
+                                                </h3>
                                                 <h3 class="bluew">${{ number_format($performer->total_sales) }}
-                                                    <span>ACHIEVED SALES ({{ $performer->category_desc }})</span> </h3>
+                                                    <span>ACHIEVED SALES ({{ $performer->category_desc }})</span>
+                                                </h3>
                                             </div>
 
                                             <div class="imgsa">
@@ -241,13 +254,13 @@
                                                 <img src="{{ $performerImg }}" class="img-fluid">
                                             </div>
                                         </div>
-                                       
+
                                     </div>
                                 @empty
                                     <div class="swiper-slide">
-                                         <div id="particles-js"></div> 
-                                         
-                                       
+                                        <div id="particles-js"></div>
+
+
                                         <div class="performer-box">
                                             <div class="perform-con">
                                                 <h2>Star Performer <span>XTEND</span> </h2>
@@ -267,13 +280,14 @@
                         <div class="swiper performer-slider7">
                             <div class="swiper-wrapper">
                                 @php
-                                    $noticeImages = $notices->filter(function($n) {
+                                    $noticeImages = $notices->filter(function ($n) {
                                         return !empty($n->image_path);
                                     });
                                 @endphp
                                 @forelse($noticeImages as $n)
                                     <div class="swiper-slide">
-                                        <div class="goft-box" style="background-image: url('{{ asset($n->image_path) }}');"></div>
+                                        <div class="goft-box"
+                                            style="background-image: url('{{ asset($n->image_path) }}');"></div>
                                     </div>
                                 @empty
                                     <div class="swiper-slide">
@@ -293,18 +307,18 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="{{ asset('js/script.js') }}"></script>
-    
-    
-     
-   
-    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script> 
+
+
+
+
+    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
 
     <!-- Real-time WebSockets updates via Pusher -->
     <script src="https://js.pusher.com/8.0.1/pusher.min.js"></script>
     <script>
-        var pusher = new Pusher('{{ env("PUSHER_APP_KEY", "f67540e46c0fa03762ae") }}', {
-            cluster: '{{ env("PUSHER_APP_CLUSTER", "ap2") }}',
+        var pusher = new Pusher('{{ env('PUSHER_APP_KEY', 'f67540e46c0fa03762ae') }}', {
+            cluster: '{{ env('PUSHER_APP_CLUSTER', 'ap2') }}',
             forceTLS: true
         });
 
@@ -324,7 +338,9 @@
                         oldMain.innerHTML = newMain.innerHTML;
 
                         // Apply a smooth staggered slide-up entry animation to all updated sections
-                        const elementsToAnimate = oldMain.querySelectorAll('.team-box-main, .performer-slider3, .goft-box, .sales-table tbody tr, .leader-box');
+                        const elementsToAnimate = oldMain.querySelectorAll(
+                            '.team-box-main, .performer-slider3, .goft-box, .sales-table tbody tr, .leader-box'
+                            );
                         elementsToAnimate.forEach((el, index) => {
                             el.style.opacity = '0';
                             setTimeout(() => {
@@ -344,34 +360,284 @@
                 });
         });
     </script>
-    
-    
+
+
     @forelse($starPerformers as $index => $performer)
-                                
-<style>
-    #particles-js-{{$index}} {
-    position: absolute;
-    z-index: 50;
-    left: 0;
-    right: 0;
-}
-</style>
-                                 
-                                        
-                                        <script>
-    particlesJS("particles-js-{{$index}}", {"particles":{"number":{"value":180,"density":{"enable":true,"value_area":552.4033491425909}},"color":{"value":"#ffffff"},"shape":{"type":"circle","stroke":{"width":0,"color":"#000000"},"polygon":{"nb_sides":5},"image":{"src":"img/github.svg","width":100,"height":100}},"opacity":{"value":1,"random":true,"anim":{"enable":true,"speed":1,"opacity_min":0,"sync":false}},"size":{"value":3.945738208161363,"random":true,"anim":{"enable":false,"speed":4,"size_min":0.3,"sync":false}},"line_linked":{"enable":false,"distance":150,"color":"#ffffff","opacity":0.4,"width":1},"move":{"enable":true,"speed":1,"direction":"none","random":true,"straight":false,"out_mode":"out","bounce":false,"attract":{"enable":false,"rotateX":600,"rotateY":600}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":true,"mode":"bubble"},"onclick":{"enable":true,"mode":"repulse"},"resize":true},"modes":{"grab":{"distance":400,"line_linked":{"opacity":1}},"bubble":{"distance":250,"size":0,"duration":2,"opacity":0,"speed":3},"repulse":{"distance":400,"duration":0.4},"push":{"particles_nb":4},"remove":{"particles_nb":2}}},"retina_detect":true});var count_particles, stats, update; stats = new Stats; stats.setMode(0); stats.domElement.style.position = 'absolute'; stats.domElement.style.left = '0px'; stats.domElement.style.top = '0px'; document.body.appendChild(stats.domElement); count_particles = document.querySelector('.js-count-particles'); update = function() { stats.begin(); stats.end(); if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) { count_particles.innerText = window.pJSDom[0].pJS.particles.array.length; } requestAnimationFrame(update); }; requestAnimationFrame(update);;
-    </script>
-                                    
-                                       
-                                   
-                                @empty
-                                  
-                                         
-                                         <script>
-    particlesJS("particles-js", {"particles":{"number":{"value":180,"density":{"enable":true,"value_area":552.4033491425909}},"color":{"value":"#ffffff"},"shape":{"type":"circle","stroke":{"width":0,"color":"#000000"},"polygon":{"nb_sides":5},"image":{"src":"img/github.svg","width":100,"height":100}},"opacity":{"value":1,"random":true,"anim":{"enable":true,"speed":1,"opacity_min":0,"sync":false}},"size":{"value":3.945738208161363,"random":true,"anim":{"enable":false,"speed":4,"size_min":0.3,"sync":false}},"line_linked":{"enable":false,"distance":150,"color":"#ffffff","opacity":0.4,"width":1},"move":{"enable":true,"speed":1,"direction":"none","random":true,"straight":false,"out_mode":"out","bounce":false,"attract":{"enable":false,"rotateX":600,"rotateY":600}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":true,"mode":"bubble"},"onclick":{"enable":true,"mode":"repulse"},"resize":true},"modes":{"grab":{"distance":400,"line_linked":{"opacity":1}},"bubble":{"distance":250,"size":0,"duration":2,"opacity":0,"speed":3},"repulse":{"distance":400,"duration":0.4},"push":{"particles_nb":4},"remove":{"particles_nb":2}}},"retina_detect":true});var count_particles, stats, update; stats = new Stats; stats.setMode(0); stats.domElement.style.position = 'absolute'; stats.domElement.style.left = '0px'; stats.domElement.style.top = '0px'; document.body.appendChild(stats.domElement); count_particles = document.querySelector('.js-count-particles'); update = function() { stats.begin(); stats.end(); if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) { count_particles.innerText = window.pJSDom[0].pJS.particles.array.length; } requestAnimationFrame(update); }; requestAnimationFrame(update);;
-    </script>
-                                        
-                                @endforelse
+        <style>
+            #particles-js-{{ $index }} {
+                position: absolute;
+                z-index: 50;
+                left: 0;
+                right: 0;
+            }
+        </style>
+
+
+        <script>
+            particlesJS("particles-js-{{ $index }}", {
+                "particles": {
+                    "number": {
+                        "value": 180,
+                        "density": {
+                            "enable": true,
+                            "value_area": 552.4033491425909
+                        }
+                    },
+                    "color": {
+                        "value": "#ffffff"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        },
+                        "image": {
+                            "src": "img/github.svg",
+                            "width": 100,
+                            "height": 100
+                        }
+                    },
+                    "opacity": {
+                        "value": 1,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 1,
+                            "opacity_min": 0,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3.945738208161363,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 4,
+                            "size_min": 0.3,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": false,
+                        "distance": 150,
+                        "color": "#ffffff",
+                        "opacity": 0.4,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 1,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 600
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "bubble"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "repulse"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 400,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 250,
+                            "size": 0,
+                            "duration": 2,
+                            "opacity": 0,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 400,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+            var count_particles, stats, update;
+            stats = new Stats;
+            stats.setMode(0);
+            stats.domElement.style.position = 'absolute';
+            stats.domElement.style.left = '0px';
+            stats.domElement.style.top = '0px';
+            document.body.appendChild(stats.domElement);
+            count_particles = document.querySelector('.js-count-particles');
+            update = function() {
+                stats.begin();
+                stats.end();
+                if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) {
+                    count_particles.innerText = window.pJSDom[0].pJS.particles.array.length;
+                }
+                requestAnimationFrame(update);
+            };
+            requestAnimationFrame(update);;
+        </script>
+
+
+
+    @empty
+
+
+        <script>
+            particlesJS("particles-js", {
+                "particles": {
+                    "number": {
+                        "value": 180,
+                        "density": {
+                            "enable": true,
+                            "value_area": 552.4033491425909
+                        }
+                    },
+                    "color": {
+                        "value": "#ffffff"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        },
+                        "image": {
+                            "src": "img/github.svg",
+                            "width": 100,
+                            "height": 100
+                        }
+                    },
+                    "opacity": {
+                        "value": 1,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 1,
+                            "opacity_min": 0,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3.945738208161363,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 4,
+                            "size_min": 0.3,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": false,
+                        "distance": 150,
+                        "color": "#ffffff",
+                        "opacity": 0.4,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 1,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 600
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "bubble"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "repulse"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 400,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 250,
+                            "size": 0,
+                            "duration": 2,
+                            "opacity": 0,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 400,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+            var count_particles, stats, update;
+            stats = new Stats;
+            stats.setMode(0);
+            stats.domElement.style.position = 'absolute';
+            stats.domElement.style.left = '0px';
+            stats.domElement.style.top = '0px';
+            document.body.appendChild(stats.domElement);
+            count_particles = document.querySelector('.js-count-particles');
+            update = function() {
+                stats.begin();
+                stats.end();
+                if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) {
+                    count_particles.innerText = window.pJSDom[0].pJS.particles.array.length;
+                }
+                requestAnimationFrame(update);
+            };
+            requestAnimationFrame(update);;
+        </script>
+    @endforelse
 
 </body>
 

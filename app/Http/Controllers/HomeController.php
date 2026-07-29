@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Department;
 use App\Models\Role;
 use App\Models\Notice;
+use App\Models\Benchmark;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -33,15 +34,19 @@ class HomeController extends Controller
         })->sortByDesc('dept_performance_percentage')->values();
 
         // 2. Fetch leaderboards grouped by benchmark (each slide contains both roles stacked)
-        $benchmarks = \App\Models\Benchmark::all()->sortByDesc(function ($bm) {
-            return (int) $bm->name;
-        });
-        $rolesList = Role::all();
+        $benchmarks = \App\Models\Benchmark::all()->sortByDesc('front_sale_value');
+        $rolesList = Role::all()->sortBy(function ($role) {
+            return strtolower($role->name) === 'front sale' ? 0 : 1;
+        })->values();
 
         $leaderboards = [];
         foreach ($benchmarks as $bm) {
             $tables = [];
             foreach ($rolesList as $role) {
+                $targetValue = strtolower($role->name) === 'upsell'
+                    ? $bm->upsell_value
+                    : $bm->front_sale_value;
+
                 $salespersons = User::where('is_admin', false)
                     ->where('is_active', true)
                     ->where('benchmark_id', $bm->id)
@@ -63,7 +68,8 @@ class HomeController extends Controller
                 if ($salespersons->count() > 0) {
                     $tables[] = [
                         'role' => $role,
-                        'salespersons' => $salespersons
+                        'salespersons' => $salespersons,
+                        'target_value' => $targetValue,
                     ];
                 }
             }

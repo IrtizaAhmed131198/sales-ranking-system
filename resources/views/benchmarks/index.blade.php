@@ -19,7 +19,9 @@
                     <thead>
                         <tr>
                             <th style="width: 80px;">ID</th>
-                            <th>Benchmark Value</th>
+                            <th>Name</th>
+                            <th class="text-end">Front Sale Value</th>
+                            <th class="text-end">Upsell Value</th>
                             <th class="text-center">Active Salespersons</th>
                             <th class="text-end" style="width: 150px;">Actions</th>
                         </tr>
@@ -43,6 +45,8 @@
             columns: [
                 { data: 'id', name: 'id', render: function(data) { return '#' + data; } },
                 { data: 'name', name: 'name', className: 'fw-semibold' },
+                { data: 'front_sale_value', name: 'front_sale_value', className: 'text-end', render: function(data) { return 'Rs. ' + data; } },
+                { data: 'upsell_value', name: 'upsell_value', className: 'text-end', render: function(data) { return 'Rs. ' + data; } },
                 { data: 'users_count', name: 'users_count', searchable: false, className: 'text-center', render: function(data) {
                     return '<span class="badge bg-secondary px-2.5 py-1.5">' + data + '</span>';
                 }},

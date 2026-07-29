@@ -9,7 +9,12 @@ class Benchmark extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'front_sale_value', 'upsell_value'];
+
+    protected $casts = [
+        'front_sale_value' => 'decimal:2',
+        'upsell_value' => 'decimal:2',
+    ];
 
     public function users()
     {
