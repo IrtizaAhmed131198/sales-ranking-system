@@ -65,6 +65,73 @@
             object-fit: contain !important;
             width: 100% !important;
         }
+
+        /*new css titan*/
+
+        .ranking-num {
+            display: flex;
+            gap: 19px;
+        }
+
+        .ranking-num h3 {
+            color: white;
+            font-size: 35px;
+        }
+
+        .ranking-num p {
+            color: white;
+            font-size: 15px;
+            font-family: 'Lufga-light';
+            margin-bottom: 0px;
+        }
+
+
+
+        .rankunf-con hr {
+            color: white;
+        }
+
+        .ranking-num h4 {
+            color: white;
+            font-size: 22px;
+            font-family: 'Lufga-light';
+            background: transparent;
+            margin-bottom: 0px;
+            padding: 0px;
+        }
+
+
+
+        .ranking-num h1 {
+            color: #ff8500;
+            font-size: 59px;
+            margin: 5px 0px 0px;
+            font-family: 'Lufga-Regular';
+        }
+
+
+
+        p.text-cont {
+            font-size: 18px;
+            margin-top: -3px;
+        }
+
+        .leaderboard.titan {
+            background: url(../images/titanbg.png);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            padding: 53px 27px;
+        }
+
+        .ranking-num img {
+            width: 227px;
+            height: auto;
+            object-fit: contain;
+        }
+
+
+        /*new css titan*/
     </style>
 </head>
 
@@ -123,15 +190,87 @@
                         <div class="swiper-wrapper">
 
                             @foreach ($leaderboards as $lb)
+
+                                {{-- Benchmark (Titan/Legend/etc) Slide --}}
                                 <div class="swiper-slide">
+
+                                    {{-- Front Sale --}}
+                                    <div class="leaderboard titan"
+                                        style="background: url('{{ asset($lb['benchmark']->front_sale_background) }}')">
+
+                                        <div class="ranking-num">
+
+                                            <img src="{{ asset($lb['benchmark']->front_sale_logo) }}" class="img-fluid">
+
+                                            <div class="rankunf-con">
+
+                                                <h3>{{ $lb['benchmark']->name }}</h3>
+
+                                                <p>{{ $lb['benchmark']->front_sale_text }}</p>
+
+                                                <hr>
+
+                                                <h4>Front Sale</h4>
+
+                                                {{-- <h1>${{ number_format($lb['benchmark']->front_sale_value) }}</h1> --}}
+                                                <h1>${{ rtrim(rtrim(number_format($lb['benchmark']->front_sale_value / 1000, 1), '0'), '.') }}K</h1>
+
+                                                <p class="text-cont">Monthly Target</p>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    {{-- Upsell --}}
+                                    <div class="leaderboard titan mt-3"
+                                        style="background: url('{{ asset($lb['benchmark']->upsell_background) }}')">
+
+                                        <div class="ranking-num">
+
+                                            <img src="{{ asset($lb['benchmark']->upsell_logo) }}" class="img-fluid">
+
+                                            <div class="rankunf-con">
+
+                                                <h3>{{ $lb['benchmark']->name }}</h3>
+
+                                                <p>{{ $lb['benchmark']->upsell_text }}</p>
+
+                                                <hr>
+
+                                                <h4>Upsell</h4>
+
+                                                {{-- <h1>${{ number_format($lb['benchmark']->upsell_value) }}</h1> --}}
+                                                <h1>${{ rtrim(rtrim(number_format($lb['benchmark']->upsell_value / 1000, 1), '0'), '.') }}K</h1>
+
+                                                <p class="text-cont">Monthly Target</p>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                {{-- Leaderboard Slide --}}
+                                <div class="swiper-slide">
+
                                     @foreach ($lb['tables'] as $tableIndex => $table)
                                         <div class="leaderboard {{ $tableIndex > 0 ? 'mt-3' : '' }}">
+
                                             <h4>
                                                 {{ strtoupper($table['role']->name) }}
-                                                (Benchmark {{ $lb['benchmark']->name }} - ${{ number_format($table['target_value']) }})
+                                                ({{ $lb['benchmark']->name }} -
+                                                ${{ number_format($table['target_value']) }})
                                             </h4>
+
                                             <div class="table-responsive">
+
                                                 <table class="table sales-table align-middle mb-0">
+
                                                     <thead>
                                                         <tr>
                                                             <th></th>
@@ -142,14 +281,18 @@
                                                             <th>ACHIEVED</th>
                                                         </tr>
                                                     </thead>
+
                                                     <tbody>
+
                                                         @foreach ($table['salespersons'] as $sp)
                                                             @php
                                                                 $avatarUrl = $sp->image_path
                                                                     ? asset($sp->image_path)
                                                                     : asset('images/default.jpg');
+
                                                                 $barColor = 'bg-danger';
                                                                 $percentClass = 'orange';
+
                                                                 if ($sp->performance_percentage >= 90) {
                                                                     $barColor = 'bg-success';
                                                                     $percentClass = 'green';
@@ -164,36 +307,55 @@
                                                                     $percentClass = 'yellow';
                                                                 }
                                                             @endphp
+
                                                             <tr>
+
                                                                 <td>
                                                                     <img src="{{ $avatarUrl }}" class="profile-img"
                                                                         alt="">
                                                                 </td>
+
                                                                 <td>{{ strtoupper($sp->name) }}</td>
+
                                                                 <td>{{ strtoupper($sp->department->name ?? 'N/A') }}
                                                                 </td>
+
                                                                 <td>${{ number_format($sp->total_target) }}</td>
+
                                                                 <td>${{ number_format($sp->total_sales) }}</td>
+
                                                                 <td>
+
                                                                     <div class="progress-wrapper">
-                                                                        <span
-                                                                            class="percent {{ $percentClass }}">{{ $sp->performance_percentage }}
-                                                                            <b>%</b> </span>
+
+                                                                        <span class="percent {{ $percentClass }}">
+                                                                            {{ $sp->performance_percentage }}<b>%</b>
+                                                                        </span>
+
                                                                         <div class="progress">
                                                                             <div class="progress-bar {{ $barColor }}"
                                                                                 style="width: {{ min($sp->performance_percentage, 100) }}%;">
                                                                             </div>
                                                                         </div>
+
                                                                     </div>
+
                                                                 </td>
+
                                                             </tr>
                                                         @endforeach
+
                                                     </tbody>
+
                                                 </table>
+
                                             </div>
+
                                         </div>
                                     @endforeach
+
                                 </div>
+
                             @endforeach
 
                         </div>
@@ -340,7 +502,7 @@
                         // Apply a smooth staggered slide-up entry animation to all updated sections
                         const elementsToAnimate = oldMain.querySelectorAll(
                             '.team-box-main, .performer-slider3, .goft-box, .sales-table tbody tr, .leader-box'
-                            );
+                        );
                         elementsToAnimate.forEach((el, index) => {
                             el.style.opacity = '0';
                             setTimeout(() => {
