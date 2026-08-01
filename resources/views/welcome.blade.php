@@ -130,6 +130,50 @@
             object-fit: contain;
         }
 
+        .rank-medal {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+
+        .gold-rank {
+            background: linear-gradient(90deg, #FFD700, #FFF6BF);
+            border-left: 6px solid #d4af37;
+            font-weight: 700;
+        }
+
+        .silver-rank {
+            background: linear-gradient(90deg, #C0C0C0, #F5F5F5);
+            border-left: 6px solid #9e9e9e;
+            font-weight: 700;
+        }
+
+        .bronze-rank {
+            background: linear-gradient(90deg, #CD7F32, #F6D3B0);
+            border-left: 6px solid #a65a2d;
+            font-weight: 700;
+        }
+
+        .gold-rank .profile-img {
+            border: 3px solid #FFD700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, .7);
+        }
+
+        .silver-rank .profile-img {
+            border: 3px solid #C0C0C0;
+            box-shadow: 0 0 15px rgba(192, 192, 192, .7);
+        }
+
+        .bronze-rank .profile-img {
+            border: 3px solid #CD7F32;
+            box-shadow: 0 0 15px rgba(205, 127, 50, .7);
+        }
+
+        .gold-rank td,
+        .silver-rank td,
+        .bronze-rank td {
+            vertical-align: middle;
+        }
+
 
         /*new css titan*/
     </style>
@@ -213,7 +257,8 @@
                                                 <h4>Front Sale</h4>
 
                                                 {{-- <h1>${{ number_format($lb['benchmark']->front_sale_value) }}</h1> --}}
-                                                <h1>${{ rtrim(rtrim(number_format($lb['benchmark']->front_sale_value / 1000, 1), '0'), '.') }}K</h1>
+                                                <h1>${{ rtrim(rtrim(number_format($lb['benchmark']->front_sale_value / 1000, 1), '0'), '.') }}K
+                                                </h1>
 
                                                 <p class="text-cont">Monthly Target</p>
 
@@ -242,7 +287,8 @@
                                                 <h4>Upsell</h4>
 
                                                 {{-- <h1>${{ number_format($lb['benchmark']->upsell_value) }}</h1> --}}
-                                                <h1>${{ rtrim(rtrim(number_format($lb['benchmark']->upsell_value / 1000, 1), '0'), '.') }}K</h1>
+                                                <h1>${{ rtrim(rtrim(number_format($lb['benchmark']->upsell_value / 1000, 1), '0'), '.') }}K
+                                                </h1>
 
                                                 <p class="text-cont">Monthly Target</p>
 
@@ -284,7 +330,7 @@
 
                                                     <tbody>
 
-                                                        @foreach ($table['salespersons'] as $sp)
+                                                        @foreach ($table['salespersons'] as $index => $sp)
                                                             @php
                                                                 $avatarUrl = $sp->image_path
                                                                     ? asset($sp->image_path)
@@ -306,13 +352,35 @@
                                                                     $barColor = 'bg-warning';
                                                                     $percentClass = 'yellow';
                                                                 }
+
+                                                                // Top 3 Rank
+                                                                $rankClass = '';
+
+                                                                if ($index == 0) {
+                                                                    $rankClass = 'gold-rank';
+                                                                } elseif ($index == 1) {
+                                                                    $rankClass = 'silver-rank';
+                                                                } elseif ($index == 2) {
+                                                                    $rankClass = 'bronze-rank';
+                                                                }
                                                             @endphp
 
-                                                            <tr>
+                                                            <tr class="{{ $rankClass }}">
 
                                                                 <td>
-                                                                    <img src="{{ $avatarUrl }}" class="profile-img"
-                                                                        alt="">
+                                                                    <div class="d-flex align-items-center">
+
+                                                                        <img src="{{ $avatarUrl }}"
+                                                                            class="profile-img" alt="">
+
+                                                                        @if ($index == 0)
+                                                                            <span class="rank-medal">🥇</span>
+                                                                        @elseif ($index == 1)
+                                                                            <span class="rank-medal">🥈</span>
+                                                                        @elseif ($index == 2)
+                                                                            <span class="rank-medal">🥉</span>
+                                                                        @endif
+                                                                    </div>
                                                                 </td>
 
                                                                 <td>{{ strtoupper($sp->name) }}</td>
