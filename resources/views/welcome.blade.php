@@ -576,13 +576,70 @@
         }
 
         /*new css titan*/
+
+
+        /* marquee css */
+        .top-marquee {
+            width: 100%;
+            height: 48px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(90deg, #6b0187, #24066e, #6b0187);
+            border-top: 2px solid #d4af37;
+            border-bottom: 2px solid #d4af37;
+            box-shadow:
+                0 0 15px rgba(212, 175, 55, .35),
+                inset 0 0 15px rgba(212, 175, 55, .15);
+            display: flex;
+            align-items: center;
+        }
+
+        .top-marquee-content {
+            white-space: nowrap;
+            display: inline-block;
+            padding-left: 100%;
+            animation: marqueeMove 35s linear infinite;
+
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFD700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+
+            text-shadow:
+                0 0 6px rgba(255, 215, 0, .7),
+                0 0 15px rgba(255, 215, 0, .4);
+        }
+
+        .top-marquee:hover .top-marquee-content {
+            animation-play-state: paused;
+        }
+
+        @keyframes marqueeMove {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-100%);
+            }
+        }
     </style>
 </head>
 
 <body>
 
     <section class="sec-main">
-
+        <div class="top-marquee">
+            <div class="top-marquee-content">
+                🏆 WELCOME TO THE SALES PERFORMANCE DASHBOARD &nbsp;&nbsp; • &nbsp;&nbsp;
+                🎯 ACHIEVE 100% TARGET TO UNLOCK YOUR ACHIEVEMENT &nbsp;&nbsp; • &nbsp;&nbsp;
+                👑 TITAN • LEGEND • CHAMPION LEAGUES &nbsp;&nbsp; • &nbsp;&nbsp;
+                ⭐ LIVE LEADERBOARD UPDATES &nbsp;&nbsp; • &nbsp;&nbsp;
+                🚀 KEEP CLOSING • KEEP CLIMBING • KEEP WINNING &nbsp;&nbsp; • &nbsp;&nbsp;
+                🎉 EVERY SALE BRINGS YOU CLOSER TO THE TOP
+            </div>
+        </div>
         <header>
             <div class="container">
                 <div class="row">
