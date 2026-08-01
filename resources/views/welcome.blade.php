@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
         @keyframes slideUpFade {
             0% {
@@ -174,6 +175,405 @@
             vertical-align: middle;
         }
 
+        #achievement-popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .75);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+        }
+
+        .achievement-content {
+            background: #28a745;
+            color: #fff;
+            padding: 40px 70px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popupScale .5s ease;
+            box-shadow: 0 0 30px rgba(0, 0, 0, .4);
+        }
+
+        .achievement-content h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .achievement-content h2 {
+            font-size: 36px;
+            margin: 0;
+        }
+
+        @keyframes popupScale {
+            from {
+                transform: scale(.4);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        div[id^="particles-js"],
+        #particles-js {
+            position: absolute;
+            z-index: 50;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        #achievement-popup {
+            position: fixed;
+            inset: 0;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, .55);
+            backdrop-filter: blur(10px);
+            z-index: 999999;
+            animation: fadeIn .4s ease;
+        }
+
+        .achievement-card {
+            width: 520px;
+            max-width: 90%;
+            padding: 40px 30px;
+            text-align: center;
+            border-radius: 25px;
+            background: linear-gradient(90deg, #6b0187 38%, #24066e 100%);
+            border: 2px solid rgba(255, 215, 0, .5);
+            box-shadow: 0 0 25px rgba(255, 215, 0, .35), 0 0 80px rgba(0, 180, 255, .15);
+            animation: popupScale .5s ease;
+        }
+
+        .achievement-icon {
+
+            width: 110px;
+            height: 110px;
+            margin: auto;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 60px;
+
+            background: linear-gradient(#FFD700, #ffb300);
+
+            box-shadow:
+                0 0 30px gold,
+                inset 0 0 20px rgba(255, 255, 255, .4);
+
+            animation: rotateGlow 3s infinite linear;
+        }
+
+        .achievement-title {
+
+            margin-top: 25px;
+            font-size: 34px;
+            font-weight: 900;
+            color: #FFD700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+
+            text-shadow:
+                0 0 15px gold,
+                0 0 25px gold;
+        }
+
+        .achievement-subtitle {
+
+            margin-top: 10px;
+            font-size: 20px;
+            color: #ffffff;
+            opacity: .9;
+        }
+
+        .achievement-name {
+
+            margin-top: 30px;
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.5;
+
+            text-shadow:
+                0 0 12px #ffffff;
+        }
+
+        .achievement-name small {
+
+            display: block;
+            margin-top: 10px;
+            color: #ffffff;
+            font-size: 18px;
+            opacity: .85;
+        }
+
+        .achievement-footer {
+
+            margin-top: 35px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        @keyframes popupScale {
+
+            0% {
+                transform: scale(.6);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+        }
+
+        @keyframes rotateGlow {
+
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+
+        }
+
+        @keyframes fadeIn {
+
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+
+        }
+
+        .achievement-popup {
+            position: fixed;
+            inset: 0;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+            background: rgba(0, 0, 0, .55);
+            backdrop-filter: blur(8px);
+        }
+
+        .popup-card {
+
+            display: flex;
+            align-items: center;
+            gap: 25px;
+
+            min-width: 520px;
+
+            padding: 30px 35px;
+
+            border-radius: 24px;
+
+            background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77);
+
+            border: 3px solid gold;
+
+            box-shadow:
+                0 0 25px rgba(255, 215, 0, .6),
+                0 20px 80px rgba(0, 0, 0, .5);
+
+            animation: popupScale .45s ease;
+        }
+
+        .achievement-avatar {
+
+            width: 120px;
+            height: 120px;
+
+            border-radius: 50%;
+            object-fit: cover;
+
+            border: 5px solid gold;
+
+            box-shadow: 0 0 25px rgba(255, 215, 0, .8);
+        }
+
+        .popup-content {
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .popup-title {
+
+            color: #FFD700;
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            letter-spacing: 3px;
+
+            margin-bottom: 10px;
+        }
+
+        #achievement-name {
+
+            color: #fff;
+
+            font-size: 34px;
+
+            font-weight: 800;
+
+            line-height: 1.2;
+        }
+
+        #achievement-name small {
+
+            display: block;
+
+            margin-top: 12px;
+
+            color: #d6d6d6;
+
+            font-size: 20px;
+
+            font-weight: 500;
+        }
+
+        @keyframes popupScale {
+
+            from {
+
+                opacity: 0;
+                transform: scale(.75);
+
+            }
+
+            to {
+
+                opacity: 1;
+                transform: scale(1);
+
+            }
+
+        }
+
+        #achievement-popup {
+            position: fixed;
+            inset: 0;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, .55);
+            backdrop-filter: blur(8px);
+            z-index: 999999;
+        }
+
+        .achievement-card {
+            width: 650px;
+            border-radius: 24px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0c1528, #22324b);
+            border: 2px solid #f7c600;
+            box-shadow:
+                0 0 25px rgba(247, 198, 0, .45),
+                inset 0 0 0 1px rgba(255, 255, 255, .08);
+            animation: popupScale .45s ease;
+        }
+
+        .achievement-header {
+            height: 8px;
+            background: linear-gradient(90deg, #f7c600, #ffea7a, #f7c600);
+        }
+
+        .achievement-body {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            padding: 28px;
+        }
+
+        .achievement-avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 5px solid #f7c600;
+            object-fit: cover;
+            box-shadow: 0 0 25px rgba(247, 198, 0, .7);
+        }
+
+        .achievement-title {
+            color: #f7c600;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .achievement-name {
+            color: #fff;
+            font-size: 42px;
+            font-weight: 800;
+            margin: 8px 0;
+        }
+
+        .achievement-role {
+            color: #d4d9e4;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .achievement-badge {
+            display: inline-block;
+            margin-top: 18px;
+            background: linear-gradient(90deg, #f7c600, #ffe36a);
+            color: #111;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .progress-wrap {
+            margin-top: 20px;
+            width: 100%;
+            height: 8px;
+            border-radius: 20px;
+            background: #1a2740;
+            overflow: hidden;
+        }
+
+        .progress-wrap span {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #f7c600, #ffe36a);
+        }
+
+        @keyframes popupScale {
+            from {
+                transform: scale(.75);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
 
         /*new css titan*/
     </style>
@@ -365,7 +765,14 @@
                                                                 }
                                                             @endphp
 
-                                                            <tr class="{{ $rankClass }}">
+                                                            <tr class="{{ $rankClass }}"
+                                                                data-id="{{ $sp->id }}"
+                                                                data-name="{{ strtoupper($sp->name) }}"
+                                                                data-league="{{ $lb['benchmark']->name }}"
+                                                                data-contest="{{ strtoupper($table['role']->name) }}"
+                                                                data-percent="{{ $sp->performance_percentage }}"
+                                                                data-achieved="{{ $sp->performance_percentage >= 100 ? 1 : 0 }}"
+                                                                data-image="{{ $sp->image ? asset($sp->image_path) : asset('images/default.jpg') }}">
 
                                                                 <td>
                                                                     <div class="d-flex align-items-center">
@@ -536,339 +943,75 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="{{ asset('js/script.js') }}"></script>
-
-
-
-
-    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
-
-    <!-- Real-time WebSockets updates via Pusher -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r17/Stats.min.js"></script>
     <script src="https://js.pusher.com/8.0.1/pusher.min.js"></script>
+
+    <!-- Global App Configuration — uses config() not env() to support cached deployments -->
     <script>
-        var pusher = new Pusher('{{ env('PUSHER_APP_KEY', 'f67540e46c0fa03762ae') }}', {
-            cluster: '{{ env('PUSHER_APP_CLUSTER', 'ap2') }}',
+        window.AppConfig = {
+            pusherKey: '{{ config('broadcasting.connections.pusher.key', 'f67540e46c0fa03762ae') }}',
+            pusherCluster: '{{ config('broadcasting.connections.pusher.options.cluster', 'ap2') }}'
+        };
+
+        Pusher.logToConsole = true;
+
+        const pusher = new Pusher(window.AppConfig.pusherKey, {
+            cluster: window.AppConfig.pusherCluster,
             forceTLS: true
         });
 
-        var channel = pusher.subscribe('ranking-updates');
-        channel.bind('ranking.updated', function(data) {
-            console.log('Realtime ranking update received. Syncing view...');
+        const channel = pusher.subscribe('ranking-updates');
 
-            fetch(window.location.href)
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
+        channel.bind('pusher:subscription_succeeded', () => {
+            console.log("Subscribed");
+        });
 
-                    const oldMain = document.querySelector('.sec-main');
-                    const newMain = doc.querySelector('.sec-main');
-                    if (oldMain && newMain) {
-                        oldMain.innerHTML = newMain.innerHTML;
-
-                        // Apply a smooth staggered slide-up entry animation to all updated sections
-                        const elementsToAnimate = oldMain.querySelectorAll(
-                            '.team-box-main, .performer-slider3, .goft-box, .sales-table tbody tr, .leader-box'
-                        );
-                        elementsToAnimate.forEach((el, index) => {
-                            el.style.opacity = '0';
-                            setTimeout(() => {
-                                el.classList.add('animate-update');
-                            }, index * 50); // Stagger delay of 50ms per item
-                        });
-
-                        // Re-initialize swiper sliders using the globally registered lifecycle method
-                        if (typeof window.initAllSliders === 'function') {
-                            window.initAllSliders();
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Realtime sync failed, falling back to full reload:', error);
-                    window.location.reload();
-                });
+        channel.bind('ranking.updated', (data) => {
+            console.log("Event Received", data);
         });
     </script>
+    <script src="{{ asset('js/script.js') }}"></script>
+    <div id="achievement-popup">
 
+        <div class="achievement-card">
 
-    @forelse($starPerformers as $index => $performer)
-        <style>
-            #particles-js-{{ $index }} {
-                position: absolute;
-                z-index: 50;
-                left: 0;
-                right: 0;
-            }
-        </style>
+            <div class="achievement-header"></div>
 
+            <div class="achievement-body">
 
-        <script>
-            particlesJS("particles-js-{{ $index }}", {
-                "particles": {
-                    "number": {
-                        "value": 180,
-                        "density": {
-                            "enable": true,
-                            "value_area": 552.4033491425909
-                        }
-                    },
-                    "color": {
-                        "value": "#ffffff"
-                    },
-                    "shape": {
-                        "type": "circle",
-                        "stroke": {
-                            "width": 0,
-                            "color": "#000000"
-                        },
-                        "polygon": {
-                            "nb_sides": 5
-                        },
-                        "image": {
-                            "src": "img/github.svg",
-                            "width": 100,
-                            "height": 100
-                        }
-                    },
-                    "opacity": {
-                        "value": 1,
-                        "random": true,
-                        "anim": {
-                            "enable": true,
-                            "speed": 1,
-                            "opacity_min": 0,
-                            "sync": false
-                        }
-                    },
-                    "size": {
-                        "value": 3.945738208161363,
-                        "random": true,
-                        "anim": {
-                            "enable": false,
-                            "speed": 4,
-                            "size_min": 0.3,
-                            "sync": false
-                        }
-                    },
-                    "line_linked": {
-                        "enable": false,
-                        "distance": 150,
-                        "color": "#ffffff",
-                        "opacity": 0.4,
-                        "width": 1
-                    },
-                    "move": {
-                        "enable": true,
-                        "speed": 1,
-                        "direction": "none",
-                        "random": true,
-                        "straight": false,
-                        "out_mode": "out",
-                        "bounce": false,
-                        "attract": {
-                            "enable": false,
-                            "rotateX": 600,
-                            "rotateY": 600
-                        }
-                    }
-                },
-                "interactivity": {
-                    "detect_on": "canvas",
-                    "events": {
-                        "onhover": {
-                            "enable": true,
-                            "mode": "bubble"
-                        },
-                        "onclick": {
-                            "enable": true,
-                            "mode": "repulse"
-                        },
-                        "resize": true
-                    },
-                    "modes": {
-                        "grab": {
-                            "distance": 400,
-                            "line_linked": {
-                                "opacity": 1
-                            }
-                        },
-                        "bubble": {
-                            "distance": 250,
-                            "size": 0,
-                            "duration": 2,
-                            "opacity": 0,
-                            "speed": 3
-                        },
-                        "repulse": {
-                            "distance": 400,
-                            "duration": 0.4
-                        },
-                        "push": {
-                            "particles_nb": 4
-                        },
-                        "remove": {
-                            "particles_nb": 2
-                        }
-                    }
-                },
-                "retina_detect": true
-            });
-            var count_particles, stats, update;
-            stats = new Stats;
-            stats.setMode(0);
-            stats.domElement.style.position = 'absolute';
-            stats.domElement.style.left = '0px';
-            stats.domElement.style.top = '0px';
-            document.body.appendChild(stats.domElement);
-            count_particles = document.querySelector('.js-count-particles');
-            update = function() {
-                stats.begin();
-                stats.end();
-                if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) {
-                    count_particles.innerText = window.pJSDom[0].pJS.particles.array.length;
-                }
-                requestAnimationFrame(update);
-            };
-            requestAnimationFrame(update);;
-        </script>
+                <img id="achievement-image" class="achievement-avatar" src="/images/default.jpg">
 
+                <div>
 
+                    <div class="achievement-title">
+                        🏆 Achievement Unlocked
+                    </div>
 
-    @empty
+                    <div id="achievement-name" class="achievement-name">
+                    </div>
 
+                    <div id="achievement-role" class="achievement-role">
+                    </div>
 
-        <script>
-            particlesJS("particles-js", {
-                "particles": {
-                    "number": {
-                        "value": 180,
-                        "density": {
-                            "enable": true,
-                            "value_area": 552.4033491425909
-                        }
-                    },
-                    "color": {
-                        "value": "#ffffff"
-                    },
-                    "shape": {
-                        "type": "circle",
-                        "stroke": {
-                            "width": 0,
-                            "color": "#000000"
-                        },
-                        "polygon": {
-                            "nb_sides": 5
-                        },
-                        "image": {
-                            "src": "img/github.svg",
-                            "width": 100,
-                            "height": 100
-                        }
-                    },
-                    "opacity": {
-                        "value": 1,
-                        "random": true,
-                        "anim": {
-                            "enable": true,
-                            "speed": 1,
-                            "opacity_min": 0,
-                            "sync": false
-                        }
-                    },
-                    "size": {
-                        "value": 3.945738208161363,
-                        "random": true,
-                        "anim": {
-                            "enable": false,
-                            "speed": 4,
-                            "size_min": 0.3,
-                            "sync": false
-                        }
-                    },
-                    "line_linked": {
-                        "enable": false,
-                        "distance": 150,
-                        "color": "#ffffff",
-                        "opacity": 0.4,
-                        "width": 1
-                    },
-                    "move": {
-                        "enable": true,
-                        "speed": 1,
-                        "direction": "none",
-                        "random": true,
-                        "straight": false,
-                        "out_mode": "out",
-                        "bounce": false,
-                        "attract": {
-                            "enable": false,
-                            "rotateX": 600,
-                            "rotateY": 600
-                        }
-                    }
-                },
-                "interactivity": {
-                    "detect_on": "canvas",
-                    "events": {
-                        "onhover": {
-                            "enable": true,
-                            "mode": "bubble"
-                        },
-                        "onclick": {
-                            "enable": true,
-                            "mode": "repulse"
-                        },
-                        "resize": true
-                    },
-                    "modes": {
-                        "grab": {
-                            "distance": 400,
-                            "line_linked": {
-                                "opacity": 1
-                            }
-                        },
-                        "bubble": {
-                            "distance": 250,
-                            "size": 0,
-                            "duration": 2,
-                            "opacity": 0,
-                            "speed": 3
-                        },
-                        "repulse": {
-                            "distance": 400,
-                            "duration": 0.4
-                        },
-                        "push": {
-                            "particles_nb": 4
-                        },
-                        "remove": {
-                            "particles_nb": 2
-                        }
-                    }
-                },
-                "retina_detect": true
-            });
-            var count_particles, stats, update;
-            stats = new Stats;
-            stats.setMode(0);
-            stats.domElement.style.position = 'absolute';
-            stats.domElement.style.left = '0px';
-            stats.domElement.style.top = '0px';
-            document.body.appendChild(stats.domElement);
-            count_particles = document.querySelector('.js-count-particles');
-            update = function() {
-                stats.begin();
-                stats.end();
-                if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) {
-                    count_particles.innerText = window.pJSDom[0].pJS.particles.array.length;
-                }
-                requestAnimationFrame(update);
-            };
-            requestAnimationFrame(update);;
-        </script>
-    @endforelse
+                    <div class="achievement-badge">
+                        TARGET ACHIEVED • 100%
+                    </div>
 
+                    <div class="progress-wrap">
+                        <span></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <audio id="achievement-sound" preload="auto">
+        <source src="{{ asset('sounds/achievement.mp3') }}" type="audio/mpeg">
+    </audio>
 </body>
 
 </html>

@@ -1,61 +1,585 @@
-// Global array to hold active Swiper instances so we can destroy them during dynamic updates
-window.activeSwipers = [];
+console.log("SCRIPT JS STARTED");
+/**
+ * Sales Performance Ranking System — Modular Dashboard JavaScript
+ * Architecture: Revealing Module Pattern with isolated IIFE namespaces.
+ *
+ * Modules:
+ *   AnimationManager  — batched CSS animation triggers
+ *   SwiperManager     — lifecycle-safe Swiper instances (Map-based, per selector)
+ *   ParticlesManager  — localized canvas cleanup & reinitialisation
+ *   StatsManager      — single Stats.js panel & single rAF loop
+ *   AchievementManager — debounced queued popup system with session tracking
+ *   RealtimeManager   — Pusher connection with debounced event handling
+ *   DashboardUpdater  — refresh-locked, slide-level DOM diffing
+ */
 
-window.initAllSliders = function() {
-    // 1. Cleanly destroy any existing active swipers to prevent memory leaks or duplicate instances
-    if (window.activeSwipers && window.activeSwipers.length > 0) {
-        window.activeSwipers.forEach(swiper => {
-            try {
-                swiper.destroy(true, true);
-            } catch (e) {
-                console.warn('Failed to destroy swiper instance:', e);
+// ------------------------------------------------------------------
+// 1. AnimationManager
+// ------------------------------------------------------------------
+const AnimationManager = (() => {
+    'use strict';
+
+    /**
+     * Stagger the slideUpFade animation over a container's key elements.
+     * Forces a reflow on each element individually (no batch thrashing).
+     */
+    const apply = (container) => {
+        if (!container) return;
+        const els = container.querySelectorAll(
+            '.team-box, .performer-box, .goft-box, .sales-table tbody tr'
+        );
+        els.forEach((el, i) => {
+            el.style.opacity = '0';
+            el.classList.remove('animate-update');
+            void el.offsetWidth; // force reflow to restart animation
+            setTimeout(() => el.classList.add('animate-update'), i * 50);
+        });
+    };
+
+    return { apply };
+})();
+
+
+// ------------------------------------------------------------------
+// 2. SwiperManager
+// ------------------------------------------------------------------
+const SwiperManager = (() => {
+    'use strict';
+
+    // Map: CSS selector string → Swiper instance
+    const _instances = new Map();
+
+    const CONFIGS = {
+        '.performer-slider': { direction: 'vertical', loop: true, reverse: false },
+        '.performer-slider2': { direction: 'vertical', loop: true, reverse: false },
+        '.performer-slider3': { direction: 'horizontal', loop: true, reverse: true },
+        '.performer-slider4': { direction: 'horizontal', loop: true, reverse: true },
+        '.performer-slider5': { direction: 'horizontal', loop: true, reverse: true },
+        '.performer-slider6': { direction: 'horizontal', loop: true, reverse: true },
+        '.performer-slider7': { direction: 'vertical', loop: true, reverse: false },
+    };
+
+    /**
+     * Create one Swiper on `el` using the config registered for `selector`.
+     * Any pre-existing instance for that selector is destroyed first.
+     */
+    const create = (selector, el, startSlide = 0) => {
+        const cfg = CONFIGS[selector];
+        if (!cfg || !el) return null;
+
+        // Destroy old instance for this selector if present
+        _destroyOne(selector);
+
+        try {
+            const sw = new Swiper(el, {
+                direction: cfg.direction,
+                loop: cfg.loop,
+                speed: 3000,
+                slidesPerView: 1,
+                spaceBetween: 0,
+                initialSlide: startSlide,
+                autoplay: {
+                    delay: 10000,
+                    disableOnInteraction: false,
+                    reverseDirection: cfg.reverse,
+                },
+                allowTouchMove: false,
+            });
+            _instances.set(selector, sw);
+            return sw;
+        } catch (err) {
+            console.error(`SwiperManager: failed to init "${selector}"`, err);
+            return null;
+        }
+    };
+
+    /** Initialise every configured selector found in `root` (default: document). */
+    const initAll = (root = document) => {
+        Object.keys(CONFIGS).forEach(sel => {
+            root.querySelectorAll(sel).forEach(el => {
+                if (!_instances.has(sel)) create(sel, el, 0);
+            });
+        });
+    };
+
+    const _destroyOne = (selector) => {
+        const sw = _instances.get(selector);
+        if (!sw) return;
+        try { sw.destroy(true, true); } catch (_) { /* ignore */ }
+        _instances.delete(selector);
+    };
+
+    const destroy = (sel) => _destroyOne(sel);
+    const get = (sel) => _instances.get(sel);
+    const destroyAll = () => [..._instances.keys()].forEach(_destroyOne);
+
+    return { create, initAll, get, destroy, destroyAll };
+})();
+
+
+// ------------------------------------------------------------------
+// 3. ParticlesManager
+// ------------------------------------------------------------------
+const ParticlesManager = (() => {
+    'use strict';
+
+    const CFG = {
+        particles: {
+            number: { value: 180, density: { enable: true, value_area: 552 } },
+            color: { value: '#ffffff' },
+            shape: {
+                type: 'circle', stroke: { width: 0, color: '#000000' },
+                polygon: { nb_sides: 5 }, image: { src: '', width: 100, height: 100 }
+            },
+            opacity: {
+                value: 1, random: true,
+                anim: { enable: true, speed: 1, opacity_min: 0, sync: false }
+            },
+            size: {
+                value: 3.95, random: true,
+                anim: { enable: false, speed: 4, size_min: 0.3, sync: false }
+            },
+            line_linked: { enable: false, distance: 150, color: '#ffffff', opacity: 0.4, width: 1 },
+            move: {
+                enable: true, speed: 1, direction: 'none', random: true,
+                straight: false, out_mode: 'out', bounce: false,
+                attract: { enable: false, rotateX: 600, rotateY: 600 }
+            },
+        },
+        interactivity: {
+            detect_on: 'canvas',
+            events: {
+                onhover: { enable: true, mode: 'bubble' },
+                onclick: { enable: true, mode: 'repulse' }, resize: true
+            },
+            modes: {
+                grab: { distance: 400, line_linked: { opacity: 1 } },
+                bubble: { distance: 250, size: 0, duration: 2, opacity: 0, speed: 3 },
+                repulse: { distance: 400, duration: 0.4 },
+                push: { particles_nb: 4 }, remove: { particles_nb: 2 }
+            },
+        },
+        retina_detect: true,
+    };
+
+    /** Start particles on every `[id^="particles-js"]` inside `root`. */
+    const init = (root = document) => {
+        if (typeof particlesJS === 'undefined') return;
+        root.querySelectorAll('[id^="particles-js"]').forEach(el => {
+            if (!el.querySelector('.particles-js-canvas-el')) {
+                try { particlesJS(el.id, CFG); }
+                catch (e) { console.error('ParticlesManager: init failed for #' + el.id, e); }
             }
         });
-        window.activeSwipers = [];
-    }
+    };
 
-    // 2. Swiper configuration matrix
-    const configs = [
-        { selector: ".performer-slider", direction: "vertical", loop: true, reverse: false },
-        { selector: ".performer-slider2", direction: "vertical", loop: true, reverse: false },
-        { selector: ".performer-slider3", direction: "horizontal", loop: true, reverse: true },
-        { selector: ".performer-slider4", direction: "horizontal", loop: true, reverse: true },
-        { selector: ".performer-slider5", direction: "horizontal", loop: true, reverse: true },
-        { selector: ".performer-slider6", direction: "horizontal", loop: true, reverse: true },
-        { selector: ".performer-slider7", direction: "vertical", loop: true, reverse: false }
-    ];
-
-    // 3. Instantiate Swiper for each matching element in the DOM
-    configs.forEach(cfg => {
-        document.querySelectorAll(cfg.selector).forEach(el => {
-            try {
-                const instance = new Swiper(el, {
-                    direction: cfg.direction,
-                    loop: cfg.loop,
-                    speed: 3000,
-                    slidesPerView: 1,
-                    spaceBetween: 0,
-                    autoplay: {
-                        delay: 10000,
-                        disableOnInteraction: false,
-                        reverseDirection: cfg.reverse
-                    },
-                    allowTouchMove: false
-                });
-                window.activeSwipers.push(instance);
-            } catch (err) {
-                console.error('Failed to initialize swiper for selector ' + cfg.selector, err);
+    /**
+     * Destroy only instances whose canvas is a descendant of `container`.
+     * Leaves all other instances alive (no global nuke on partial updates).
+     */
+    const destroyIn = (container) => {
+        if (typeof particlesJS === 'undefined' || !window.pJSDom || !container) return;
+        for (let i = window.pJSDom.length - 1; i >= 0; i--) {
+            const pjs = window.pJSDom[i];
+            const canvas = pjs?.pJS?.canvas?.el;
+            if (canvas && container.contains(canvas)) {
+                try { pjs.pJS.fn.vendors.destroypJS(); } catch (_) { /* ignore */ }
+                window.pJSDom.splice(i, 1);
             }
-        });
-    });
-};
+        }
+    };
 
-// Auto-run when the page DOM is fully parsed
-document.addEventListener("DOMContentLoaded", function() {
-    window.initAllSliders();
+    /** Nuke every active instance (used only on full-page teardown). */
+    const destroyAll = () => {
+        if (!window.pJSDom) return;
+        for (let i = window.pJSDom.length - 1; i >= 0; i--) {
+            try { window.pJSDom[i].pJS.fn.vendors.destroypJS(); } catch (_) { /* ignore */ }
+        }
+        window.pJSDom = [];
+    };
+
+    return { init, destroyIn, destroyAll };
+})();
+
+
+// ------------------------------------------------------------------
+// 4. StatsManager  (singleton — one panel, one rAF loop)
+// ------------------------------------------------------------------
+const StatsManager = (() => {
+    'use strict';
+
+    let _stats = null;
+    let _raf = null;
+
+    const init = () => {
+        if (typeof Stats === 'undefined' || _stats) return;
+        try {
+            _stats = new Stats();
+            _stats.setMode(0);
+            Object.assign(_stats.domElement.style, {
+                position: 'absolute', left: '0px', top: '0px', zIndex: '99999',
+            });
+            document.body.appendChild(_stats.domElement);
+
+            const loop = () => {
+                _stats.begin();
+                _stats.end();
+                _raf = requestAnimationFrame(loop);
+            };
+            _raf = requestAnimationFrame(loop);
+        } catch (e) {
+            console.warn('StatsManager: Stats.js not available.', e);
+        }
+    };
+
+    const destroy = () => {
+        if (_raf) { cancelAnimationFrame(_raf); _raf = null; }
+        if (_stats?.domElement?.parentNode) {
+            _stats.domElement.parentNode.removeChild(_stats.domElement);
+        }
+        _stats = null;
+    };
+
+    return { init, destroy };
+})();
+
+
+// ------------------------------------------------------------------
+// 5. AchievementManager
+// ------------------------------------------------------------------
+const AchievementManager = (() => {
+    'use strict';
+
+    const _prev = new Map();   // id → last known percent
+    const _fired = new Set();   // ids that have already triggered a popup this session
+    const _queue = [];
+    let _showing = false;
+
+    /**
+     * Seed _prev from the current live DOM so we never fire on initial load.
+     * Also mark anyone already at 100% so they don't trigger after the first refresh.
+     */
+    const init = (root = document) => {
+        root.querySelectorAll('tbody tr[data-id]').forEach(row => {
+            const id = row.dataset.id;
+            const pct = parseFloat(row.dataset.percent || '0');
+            _prev.set(id, pct);
+            if (pct >= 100) _fired.add(id);
+        });
+    };
+
+    /**
+     * Compare freshly-fetched rows against stored baselines.
+     * Call this BEFORE updating the live DOM.
+     *
+     * @param {Document|Element} newRoot  — the parsed fetched document
+     */
+    const check = (newRoot) => {
+        newRoot.querySelectorAll('tbody tr[data-id]').forEach(row => {
+            const id = row.dataset.id;
+            const pct = parseFloat(row.dataset.percent || '0');
+
+            if (!_prev.has(id)) {
+                // New salesperson not seen before — just baseline, no popup
+                _prev.set(id, pct);
+                if (pct >= 100) _fired.add(id);
+                return;
+            }
+
+            const was = _prev.get(id);
+
+            // 100% threshold crossed AND not yet celebrated this session
+            if (was < 100 && pct >= 100 && !_fired.has(id)) {
+                _fired.add(id);
+                console.log("Image from row:", row.dataset.image);
+                _enqueue(
+                    row.dataset.name,
+                    row.dataset.league,
+                    row.dataset.contest,
+                    row.dataset.image
+                );
+            }
+
+            _prev.set(id, pct);   // always update baseline after evaluation
+        });
+    };
+
+    const _enqueue = (name, league, contest, image) => {
+
+        console.log("Enqueue Image:", image);
+
+        _queue.push({
+            name,
+            league,
+            contest,
+            image
+        });
+
+        if (!_showing) {
+            _runNext();
+        }
+    };
+
+    const _runNext = () => {
+        if (_queue.length === 0) { _showing = false; return; }
+        _showing = true;
+
+        const { name, league, contest, image } = _queue.shift();
+
+        console.log("Popup Image:", image);
+
+        const img = document.getElementById("achievement-image");
+
+        if (img) {
+            img.src = image || "/images/default.jpg";
+        }
+
+        // Play Sound
+        const sound = document.getElementById("achievement-sound");
+
+        if (sound) {
+            sound.currentTime = 0;
+            sound.volume = 0.8;
+            sound.play().catch(() => { });
+        }
+
+        // Confetti burst
+        if (typeof confetti === 'function') {
+            confetti({ particleCount: 250, spread: 120, origin: { y: 0.6 } });
+            setTimeout(() => {
+                confetti({ particleCount: 150, angle: 60, spread: 80, origin: { x: 0 } });
+                confetti({ particleCount: 150, angle: 120, spread: 80, origin: { x: 1 } });
+            }, 300);
+        }
+
+        const popup = document.getElementById('achievement-popup');
+        const nameEl = document.getElementById('achievement-name');
+        const imgEl = document.getElementById('achievement-image');
+        // const img = document.getElementById("achievement-image");
+
+        if (img) {
+            console.log("Popup Image:", image);
+
+            img.src = image && image !== "undefined"
+                ? image
+                : "/images/default.jpg";
+        }
+
+        if (popup && nameEl) {
+
+            if (imgEl) {
+                imgEl.src = image;
+            }
+
+            nameEl.innerHTML = `
+        <strong>${name}</strong>
+        <small>${league} - ${contest}</small>
+    `;
+            // document.getElementById("achievement-role").innerHTML =
+            // `${league} • ${contest}`;
+
+            popup.style.display = 'flex';
+
+            setTimeout(() => {
+                popup.style.display = 'none';
+                setTimeout(_runNext, 500);
+            }, 4000);
+
+        } else {
+            _showing = false;
+        }
+    };
+
+    /** Manually enqueue a celebration — exposed for debugging / testing */
+    const celebrate = (name, league, contest, image) => _enqueue(name, league, contest, image);
+
+    return { init, check, celebrate };
+})();
+
+
+// ------------------------------------------------------------------
+// 6. RealtimeManager  (Pusher — debounced 1 s)
+// ------------------------------------------------------------------
+const RealtimeManager = (() => {
+    'use strict';
+
+    let _debounce = null;
+
+    const init = () => {
+
+        if (typeof Pusher === 'undefined') {
+            console.error("Pusher not loaded");
+            return;
+        }
+
+        const pusher = new Pusher(window.AppConfig.pusherKey, {
+            cluster: window.AppConfig.pusherCluster,
+            forceTLS: true
+        });
+
+        pusher.connection.bind('connected', () => {
+            console.log("✅ Pusher Connected");
+        });
+
+        const channel = pusher.subscribe('ranking-updates');
+
+        channel.bind('pusher:subscription_succeeded', () => {
+            console.log("✅ Subscribed");
+        });
+
+        channel.bind('ranking.updated', function (data) {
+
+            console.log("🔥 ranking.updated received", data);
+
+            clearTimeout(_debounce);
+
+            _debounce = setTimeout(() => {
+                console.log("Refreshing dashboard...");
+                DashboardUpdater.refresh();
+            }, 1000);
+
+        });
+
+    };
+
+    return { init };
+
+})();
+
+
+// ------------------------------------------------------------------
+// 7. DashboardUpdater  (refresh-locked, slide-level DOM diffing)
+// ------------------------------------------------------------------
+const DashboardUpdater = (() => {
+    'use strict';
+
+    let _busy = false;
+
+    // ---- private helpers ----------------------------------------
+
+    /** Full replace: destroy old Swiper, clone new element, reinit. */
+    const _recreate = (selector, oldEl, newEl, hasParticles) => {
+        if (hasParticles) ParticlesManager.destroyIn(oldEl);
+
+        const saved = SwiperManager.get(selector)?.realIndex ?? 0;
+        SwiperManager.destroy(selector);
+
+        const clone = newEl.cloneNode(true);
+        oldEl.parentNode.replaceChild(clone, oldEl);
+
+        SwiperManager.create(selector, clone, saved);
+        AnimationManager.apply(clone);
+        if (hasParticles) ParticlesManager.init(clone);
+    };
+
+    /** Slide-level diff: only touch slides whose HTML changed. */
+    const _diff = (selector, newEl, hasParticles) => {
+        const oldEl = document.querySelector(selector);
+        if (!oldEl || !newEl) return;
+        if (oldEl.innerHTML === newEl.innerHTML) return;   // nothing changed
+
+        const oldSlides = oldEl.querySelectorAll('.swiper-slide');
+        const newSlides = newEl.querySelectorAll('.swiper-slide');
+
+        if (oldSlides.length !== newSlides.length) {
+            _recreate(selector, oldEl, newEl, hasParticles);
+            return;
+        }
+
+        let changed = false;
+        oldSlides.forEach((oldSlide, i) => {
+            const newSlide = newSlides[i];
+            if (oldSlide.innerHTML === newSlide.innerHTML) return;
+
+            changed = true;
+            if (hasParticles) ParticlesManager.destroyIn(oldSlide);
+            oldSlide.innerHTML = newSlide.innerHTML;
+            if (hasParticles) ParticlesManager.init(oldSlide);
+            AnimationManager.apply(oldSlide);
+        });
+
+        if (changed) {
+            SwiperManager.get(selector)?.update();
+        }
+    };
+
+    // ---- public -------------------------------------------------
+
+    const refresh = async () => {
+        if (_busy) { console.log('DashboardUpdater: refresh locked, skipping.'); return; }
+        _busy = true;
+
+        try {
+            const res = await fetch(window.location.href);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const html = await res.text();
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+
+            // ★ Check achievements BEFORE touching the DOM ★
+            AchievementManager.check(doc);
+
+            // Team boxes (no Swiper)
+            const oldTeam = document.querySelector('.team-box-main');
+            const newTeam = doc.querySelector('.team-box-main');
+            if (oldTeam && newTeam && oldTeam.innerHTML !== newTeam.innerHTML) {
+                oldTeam.innerHTML = newTeam.innerHTML;
+                AnimationManager.apply(oldTeam);
+            }
+
+            // Sliders
+            _diff('.performer-slider2', doc.querySelector('.performer-slider2'), false);
+            _diff('.performer-slider', doc.querySelector('.performer-slider'), true);
+            _diff('.performer-slider7', doc.querySelector('.performer-slider7'), false);
+
+        } catch (err) {
+            console.error('DashboardUpdater: refresh failed —', err);
+        } finally {
+            _busy = false;
+        }
+    };
+
+    return { refresh };
+})();
+
+
+// ------------------------------------------------------------------
+// 8. Boot
+// ------------------------------------------------------------------
+document.addEventListener('DOMContentLoaded', () => {
+    try { SwiperManager.initAll(); } catch (e) { console.error('Boot: SwiperManager failed', e); }
+    try { ParticlesManager.init(); } catch (e) { console.error('Boot: ParticlesManager failed', e); }
+    try { AchievementManager.init(); } catch (e) { console.error('Boot: AchievementManager failed', e); }
+    try { StatsManager.init(); } catch (e) { console.error('Boot: StatsManager failed', e); }
+    try { RealtimeManager.init(); } catch (e) { console.error('Boot: RealtimeManager failed', e); }
 });
 
 
+// ------------------------------------------------------------------
+// 9. Global debug/test namespace (available immediately after script loads)
+// ------------------------------------------------------------------
+window.dashboardApp = {
+    SwiperManager,
+    ParticlesManager,
+    AchievementManager,
+    DashboardUpdater,
+    StatsManager,
+    RealtimeManager,
+    AnimationManager,
+};
 
+window.dashboardDebug = {
 
+    triggerMockUpdate() {
+        DashboardUpdater.refresh();
+    },
 
+    triggerMockCelebration(
+        name = 'JOHN DOE',
+        league = 'TITAN',
+        contest = 'FRONT SALE'
+    ) {
+        AchievementManager.celebrate(name, league, contest);
+    }
+
+};
+console.log("SCRIPT JS FINISHED");
