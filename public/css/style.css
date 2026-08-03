@@ -121,6 +121,7 @@ span {
     max-width: 1100px;
     margin: 0px auto 20px;
     border-radius: 12px;
+    height: 365px;
     overflow: hidden;
     border: 2px solid #ece1e1;
 }
@@ -213,16 +214,17 @@ span {
     border-bottom-width: 0 !important;
 }
 section.sec-main {
-    height: 100vh;
-    background-image: url(../images/bg.jpg);
+    height: auto;
+    background-image: url("../images/bg.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     padding-top: 0px;
+    /* overflow: clip; */
 }
 
 header {
-    background: url(../images/header.png);
+    background: url("../images/header.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -240,7 +242,7 @@ header {
 }
 
 .performer-box {
-    background: url(../images/left-slid.png);
+    background: url("../images/left-slid.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -255,7 +257,7 @@ header {
 }
 
 .goft-box {
-    background-image: url(../images/gift-box.png);
+    background-image: url("../images/gift-box.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -325,7 +327,7 @@ section.sec-main .container-fluid {
     text-align: start;
     margin-bottom: 0px;
     font-family: "Bebas Neue", sans-serif;
-    font-size: 33px;
+    font-size: 28px;
     /* line-height: 31px; */
     text-shadow: -1px 6px 4px black;
 }
@@ -354,6 +356,8 @@ section.sec-main .container-fluid {
 
 .perform-con {
     width: 70%;
+    position: relative;
+    z-index: 1;
 }
 
 .rating {
@@ -451,7 +455,9 @@ section.sec-main .container-fluid {
 
 .performer-slider {
     width: 100%;
-    height: 369px; /* apne card ki height */
+    height: 368px; /* apne card ki height */
+    border: 2px solid white;
+    border-radius: 10px;
 }
 
 .performer-slider .swiper-slide {
@@ -470,6 +476,8 @@ section.sec-main .container-fluid {
     width: 100%;
     height: 369px; /* apne card ki height */
     margin-top: 15px;
+    border: 2px solid white;
+    border-radius: 10px;
 }
 
 .performer-slider7 .swiper-slide {
@@ -525,6 +533,9 @@ h3.bluew span {
     header {
         margin-bottom: 26px;
     }
+    section.sec-main {
+    height: auto;
+}
 
     .sales-table tbody td {
         font-size: 12px;
@@ -541,16 +552,24 @@ h3.bluew span {
 
     .leaderboard {
         margin: 0px auto 12px;
+        height: 340px;
+        padding: 10px 10px;
     }
-
+.leaderboard.titan{
+    display:flex;
+    align-items:center;
+}
+    .performer-slider {
+    height: 341px;
+    border-radius: 10px;
+}
     .performer-slider7 {
-        margin-top: 5px;
-        height: 376px;
+        margin-top: 15px;
+        height: 340px;
+        border-radius: 10px;
     }
 
     .goft-box {
         height: 367px;
     }
 }
-
-
