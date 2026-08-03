@@ -214,7 +214,7 @@ span {
     border-bottom-width: 0 !important;
 }
 section.sec-main {
-    height: auto;
+    height: 100vh;
     background-image: url("../images/bg.jpg");
     background-position: center;
     background-repeat: no-repeat;
@@ -1115,7 +1115,7 @@ div[id^="particles-js"],
         margin-bottom: 26px;
     }
     section.sec-main {
-        height: auto;
+        height: auto !important;
     }
 
     .sales-table tbody td {
