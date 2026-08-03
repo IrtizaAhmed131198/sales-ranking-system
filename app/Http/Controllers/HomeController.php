@@ -61,7 +61,7 @@ class HomeController extends Controller
                             : 0;
                         return $user;
                     })
-                    ->sortByDesc('performance_percentage')
+                    ->sortByDesc('total_sales')
                     ->take(5)
                     ->values();
 
