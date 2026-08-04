@@ -417,8 +417,7 @@ const RankTracker = (() => {
     const _renderMarquee = () => {
         const marqueeEl = document.getElementById('dynamic-marquee');
         if (marqueeEl) {
-            const combined = _marqueeMessages.join(' &nbsp;&nbsp; • &nbsp;&nbsp; ');
-            marqueeEl.innerHTML = `${combined} &nbsp;&nbsp; • &nbsp;&nbsp; ${combined} &nbsp;&nbsp; • &nbsp;&nbsp; ${combined}`;
+            marqueeEl.innerHTML = _marqueeMessages.join(' &nbsp;&nbsp; • &nbsp;&nbsp; ');
         }
     };
 
