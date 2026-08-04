@@ -406,7 +406,7 @@
     <!-- Global App Configuration — uses config() not env() to support cached deployments -->
     <script>
         window.SoundPaths = {
-            newSale: "{{ asset('sounds/sale-alert.mp3') }}",
+            newSale: "{{ asset('sounds/sale-update.mp3') }}",
             leaderboard: "{{ asset('sounds/sale-update.mp3') }}",
             milestone: "{{ asset('sounds/universfield-achievement-unlock-243762.mp3') }}"
         };
