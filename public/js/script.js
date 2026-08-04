@@ -538,7 +538,7 @@ const RankTracker = (() => {
         });
 
         if (leaderboardImproved) {
-            playSound(window.SoundPaths.leaderboard);
+            playSound(window.SoundPaths.milestone);
         }
 
         if (departmentImproved || starPerformerImproved) {
