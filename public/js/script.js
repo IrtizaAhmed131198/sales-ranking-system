@@ -165,6 +165,12 @@ const ParticlesManager = (() => {
     /** Start particles on every `[id^="particles-js"]` inside `root`. */
     const init = (root = document) => {
         if (typeof particlesJS === 'undefined') return;
+
+        // Defensive fix: particlesJS destroypJS sometimes leaves window.pJSDom as null or undefined.
+        if (!window.pJSDom) {
+            window.pJSDom = [];
+        }
+
         root.querySelectorAll('[id^="particles-js"]').forEach(el => {
             if (!el.querySelector('.particles-js-canvas-el')) {
                 try { particlesJS(el.id, CFG); }
@@ -398,7 +404,159 @@ const AchievementManager = (() => {
 
 
 // ------------------------------------------------------------------
-// 6. RealtimeManager  (Pusher — debounced 1 s)
+// 6. RankTracker (Tracks rank changes and plays sounds)
+// ------------------------------------------------------------------
+const RankTracker = (() => {
+    'use strict';
+
+    let _oldLeaderboard = new Map();
+    let _oldDepartments = new Map();
+    let _oldStarPerformers = new Map();
+    let _marqueeMessages = [];
+
+    const _renderMarquee = () => {
+        const marqueeEl = document.getElementById('dynamic-marquee');
+        if (marqueeEl) {
+            const combined = _marqueeMessages.join(' &nbsp;&nbsp; • &nbsp;&nbsp; ');
+            marqueeEl.innerHTML = `${combined} &nbsp;&nbsp; • &nbsp;&nbsp; ${combined} &nbsp;&nbsp; • &nbsp;&nbsp; ${combined}`;
+        }
+    };
+
+    const _addMarqueeMessage = (msg) => {
+        _marqueeMessages.unshift(msg);
+        if (_marqueeMessages.length > 8) _marqueeMessages.pop();
+        _renderMarquee();
+    };
+
+    const _getLeaderboardRanks = (doc) => {
+        const ranks = new Map();
+        doc.querySelectorAll('.performer-slider2 tbody tr[data-id]').forEach(row => {
+            const tbody = row.closest('tbody');
+            const index = Array.from(tbody.children).indexOf(row);
+            const listId = tbody.closest('.leaderboard')?.querySelector('h4')?.textContent?.trim() || 'default';
+            const name = row.dataset.name || 'Salesperson';
+            const sales = parseFloat(row.dataset.sales?.replace(/,/g, '') || '0');
+            const percent = parseFloat(row.dataset.percent || '0');
+
+            ranks.set(`${listId}-${row.dataset.id}`, { rank: index, name, sales, percent });
+        });
+        return ranks;
+    };
+
+    const _getDepartmentRanks = (doc) => {
+        const ranks = new Map();
+        doc.querySelectorAll('.team-box-main .team-box').forEach((box, index) => {
+            const deptName = box.querySelector('h3')?.textContent?.trim() || `dept-${index}`;
+            ranks.set(deptName, index);
+        });
+        return ranks;
+    };
+
+    const _getStarPerformers = (doc) => {
+        const performers = new Map();
+        doc.querySelectorAll('.performer-slider .swiper-slide').forEach((slide) => {
+            const h2 = slide.querySelector('.perform-con h2');
+            const h3 = slide.querySelector('.perform-con h3');
+            if (h2 && h3) {
+                const category = h2.childNodes[0]?.nodeValue?.trim();
+                const name = h3.childNodes[0]?.nodeValue?.trim();
+                if (category && name) {
+                    performers.set(category, name);
+                }
+            }
+        });
+        return performers;
+    };
+
+    const init = (root = document) => {
+        _oldLeaderboard = _getLeaderboardRanks(root);
+        _oldDepartments = _getDepartmentRanks(root);
+        _oldStarPerformers = _getStarPerformers(root);
+
+        if (Array.isArray(window.InitialMarqueeMessages) && window.InitialMarqueeMessages.length) {
+            _marqueeMessages = [...window.InitialMarqueeMessages];
+            _renderMarquee();
+        }
+    };
+
+    const check = (newDoc) => {
+        let leaderboardImproved = false;
+        let departmentImproved = false;
+        let starPerformerImproved = false;
+
+        const newLeaderboard = _getLeaderboardRanks(newDoc);
+        newLeaderboard.forEach((newData, key) => {
+            if (_oldLeaderboard.has(key)) {
+                const oldData = _oldLeaderboard.get(key);
+
+                if (newData.sales > oldData.sales) {
+                    _addMarqueeMessage(`💰 New Sale by ${newData.name}! ($${newData.sales - oldData.sales})`);
+                }
+
+                if (newData.percent >= 100 && oldData.percent < 100) {
+                    _addMarqueeMessage(`🎯 Target Completed by ${newData.name}!`);
+                }
+
+                if (newData.rank < oldData.rank) {
+                    leaderboardImproved = true;
+                    _addMarqueeMessage(`📈 ${newData.name} moved UP to rank #${newData.rank + 1}!`);
+                }
+            }
+        });
+
+        const newDepartments = _getDepartmentRanks(newDoc);
+        newDepartments.forEach((newRank, key) => {
+            if (_oldDepartments.has(key)) {
+                const oldRank = _oldDepartments.get(key);
+                if (newRank < oldRank) {
+                    departmentImproved = true;
+                    _addMarqueeMessage(`🏢 Department ${key} overtook others!`);
+                }
+            }
+        });
+
+        const newStarPerformers = _getStarPerformers(newDoc);
+        newStarPerformers.forEach((newName, category) => {
+            if (_oldStarPerformers.has(category)) {
+                const oldName = _oldStarPerformers.get(category);
+                if (newName !== oldName && newName && !newName.includes("NO RECORD")) {
+                    starPerformerImproved = true;
+                    _addMarqueeMessage(`🌟 New Top Performer in ${category}: ${newName}!`);
+                }
+            } else {
+                if (newName && !newName.includes("NO RECORD")) {
+                    starPerformerImproved = true;
+                }
+            }
+        });
+
+        if (leaderboardImproved) {
+            playSound(window.SoundPaths.leaderboard);
+        }
+
+        if (departmentImproved || starPerformerImproved) {
+            setTimeout(() => {
+                playSound(window.SoundPaths.milestone);
+            }, leaderboardImproved ? 1500 : 0);
+        }
+
+        _oldLeaderboard = newLeaderboard;
+        _oldDepartments = newDepartments;
+        _oldStarPerformers = newStarPerformers;
+    };
+
+    const playSound = (src) => {
+        const audio = new Audio(src);
+        audio.volume = 0.8;
+        audio.play().catch(e => console.log('RankTracker Audio play failed:', e));
+    };
+
+    return { init, check };
+})();
+
+
+// ------------------------------------------------------------------
+// 7. RealtimeManager  (Pusher — debounced 1 s)
 // ------------------------------------------------------------------
 const RealtimeManager = (() => {
     'use strict';
@@ -448,7 +606,7 @@ const RealtimeManager = (() => {
 
 
 // ------------------------------------------------------------------
-// 7. DashboardUpdater  (refresh-locked, slide-level DOM diffing)
+// 8. DashboardUpdater  (refresh-locked, slide-level DOM diffing)
 // ------------------------------------------------------------------
 const DashboardUpdater = (() => {
     'use strict';
@@ -518,6 +676,9 @@ const DashboardUpdater = (() => {
             // ★ Check achievements BEFORE touching the DOM ★
             AchievementManager.check(doc);
 
+            // ★ Check ranks for sounds BEFORE touching the DOM ★
+            RankTracker.check(doc);
+
             // Team boxes (no Swiper)
             const oldTeam = document.querySelector('.team-box-main');
             const newTeam = doc.querySelector('.team-box-main');
@@ -543,24 +704,26 @@ const DashboardUpdater = (() => {
 
 
 // ------------------------------------------------------------------
-// 8. Boot
+// 9. Boot
 // ------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
     try { SwiperManager.initAll(); } catch (e) { console.error('Boot: SwiperManager failed', e); }
     try { ParticlesManager.init(); } catch (e) { console.error('Boot: ParticlesManager failed', e); }
     try { AchievementManager.init(); } catch (e) { console.error('Boot: AchievementManager failed', e); }
+    try { RankTracker.init(); } catch (e) { console.error('Boot: RankTracker failed', e); }
     try { StatsManager.init(); } catch (e) { console.error('Boot: StatsManager failed', e); }
     try { RealtimeManager.init(); } catch (e) { console.error('Boot: RealtimeManager failed', e); }
 });
 
 
 // ------------------------------------------------------------------
-// 9. Global debug/test namespace (available immediately after script loads)
+// 10. Global debug/test namespace (available immediately after script loads)
 // ------------------------------------------------------------------
 window.dashboardApp = {
     SwiperManager,
     ParticlesManager,
     AchievementManager,
+    RankTracker,
     DashboardUpdater,
     StatsManager,
     RealtimeManager,

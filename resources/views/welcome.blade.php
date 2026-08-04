@@ -19,13 +19,8 @@
 
     <section class="sec-main">
         <div class="top-marquee">
-            <div class="top-marquee-content">
-                🏆 WELCOME TO THE SALES PERFORMANCE DASHBOARD &nbsp;&nbsp; • &nbsp;&nbsp;
-                🎯 ACHIEVE 100% TARGET TO UNLOCK YOUR ACHIEVEMENT &nbsp;&nbsp; • &nbsp;&nbsp;
-                👑 TITAN • LEGEND • CHAMPION LEAGUES &nbsp;&nbsp; • &nbsp;&nbsp;
-                ⭐ LIVE LEADERBOARD UPDATES &nbsp;&nbsp; • &nbsp;&nbsp;
-                🚀 KEEP CLOSING • KEEP CLIMBING • KEEP WINNING &nbsp;&nbsp; • &nbsp;&nbsp;
-                🎉 EVERY SALE BRINGS YOU CLOSER TO THE TOP
+            <div class="top-marquee-content" id="dynamic-marquee">
+                ⭐ WAITING FOR LIVE UPDATES &nbsp;&nbsp; • &nbsp;&nbsp; 🚀 KEEP CLOSING
             </div>
         </div>
         <header>
@@ -216,6 +211,7 @@
                                                                 data-league="{{ $lb['benchmark']->name }}"
                                                                 data-contest="{{ strtoupper($table['role']->name) }}"
                                                                 data-percent="{{ $sp->performance_percentage }}"
+                                                                data-sales="{{ $sp->total_sales }}"
                                                                 data-achieved="{{ $sp->performance_percentage >= 100 ? 1 : 0 }}"
                                                                 data-image="{{ $sp->image ? asset($sp->image_path) : asset('images/default.jpg') }}">
 
@@ -385,6 +381,14 @@
             </div>
         </div>
     </section>
+    @php
+        $messages = array_filter([
+            $salesText,
+            $targetCompletedText,
+            $topPerformerText,
+            $topDeptText
+        ]);
+    @endphp
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -394,6 +398,11 @@
 
     <!-- Global App Configuration — uses config() not env() to support cached deployments -->
     <script>
+        window.SoundPaths = {
+            leaderboard: "{{ asset('sounds/sale-update.mp3') }}",
+            milestone: "{{ asset('sounds/universfield-achievement-unlock-243762.mp3') }}"
+        };
+
         window.AppConfig = {
             pusherKey: '{{ config('broadcasting.connections.pusher.key', 'f67540e46c0fa03762ae') }}',
             pusherCluster: '{{ config('broadcasting.connections.pusher.options.cluster', 'ap2') }}'
@@ -415,6 +424,8 @@
         channel.bind('ranking.updated', (data) => {
             console.log("Event Received", data);
         });
+
+        window.InitialMarqueeMessages = @json($messages);
     </script>
     <script src="{{ asset('js/script.js') }}"></script>
     <div id="achievement-popup">

@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Role;
 use App\Models\Notice;
 use App\Models\Benchmark;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -137,6 +138,50 @@ class HomeController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('welcome', compact('departments', 'leaderboards', 'starPerformers', 'notices'));
+        // 5. Marquee Data — direct from existing records, no separate events table
+
+        // New Sale — already latest sale
+        $latestSale = Sale::with('user')->orderBy('date', 'desc')->first();
+        $salesText = $latestSale
+            ? "💰 New Sale by {$latestSale->user->name}! (\${$latestSale->amount})"
+            : "No sales recorded yet.";
+
+        // Target Completed — jis user ne sabse recently 100%+ cross kiya (based on last sale date)
+        $completedUser = User::where('is_admin', false)->where('is_active', true)
+            ->with(['targets', 'sales'])
+            ->get()
+            ->map(function ($u) {
+                $u->total_target = $u->targets->sum('target_amount');
+                $u->total_sales = $u->sales->sum('amount');
+                $u->performance_percentage = $u->total_target > 0
+                    ? round(($u->total_sales / $u->total_target) * 100, 2) : 0;
+                $u->last_sale_date = optional($u->sales->sortByDesc('date')->first())->date;
+                return $u;
+            })
+            ->filter(fn ($u) => $u->performance_percentage >= 100 && $u->last_sale_date)
+            ->sortByDesc('last_sale_date')
+            ->first();
+
+        $targetCompletedText = $completedUser
+            ? "🎯 Target Completed by {$completedUser->name}!"
+            : "No targets completed yet.";
+
+        // Current #1 Top Performer — leaderboard se seedha nikal lo (already sorted desc)
+        $topPerformerText = "No top performer yet.";
+        if (!empty($leaderboards)) {
+            $firstTable = $leaderboards[0]['tables'][0] ?? null;
+            $leader = $firstTable['salespersons'][0] ?? null;
+            if ($leader) {
+                $topPerformerText = "🌟 Current Top Performer: {$leader->name}!";
+            }
+        }
+
+        // Current #1 Department — departments already sortByDesc('dept_performance_percentage')
+        $topDeptText = "No department data yet.";
+        if ($departments->isNotEmpty()) {
+            $topDeptText = "🏢 Leading Department: {$departments->first()->name}!";
+        }
+
+        return view('welcome', compact('departments', 'leaderboards', 'starPerformers', 'notices', 'salesText', 'targetCompletedText', 'topPerformerText', 'topDeptText'));
     }
 }
