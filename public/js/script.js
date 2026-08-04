@@ -537,14 +537,14 @@ const RankTracker = (() => {
             }
         });
 
-        if (leaderboardImproved || newSaleMade) {
+        if (leaderboardImproved) {
             playSound(window.SoundPaths.leaderboard);
         }
 
         if (departmentImproved || starPerformerImproved) {
             setTimeout(() => {
                 playSound(window.SoundPaths.milestone);
-            }, (leaderboardImproved || newSaleMade) ? 1500 : 0);
+            }, (leaderboardImproved) ? 1500 : 0);
         }
 
         _oldLeaderboard = newLeaderboard;
