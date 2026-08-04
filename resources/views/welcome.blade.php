@@ -288,6 +288,13 @@
 
                             <div class="swiper-wrapper">
 
+                                @php
+                                    $image1 = asset('images/bg-1.png');
+                                    $image2 = asset('images/bg-2.png');
+                                    $image3 = asset('images/bg-3.png');
+                                    $image4 = asset('images/bg-4.png');
+                                    $backgroundImages = [$image1, $image2, $image3, $image4];
+                                @endphp
 
                                 @forelse($starPerformers as $index => $performer)
                                     <div class="swiper-slide">
@@ -295,7 +302,7 @@
                                         <div id="particles-js-{{ $index }}"></div>
 
 
-                                        <div class="performer-box">
+                                        <div class="performer-box" style="background-image: url('{{ $backgroundImages[$index % count($backgroundImages)] }}');">
                                             <div class="perform-con">
                                                 <h2>{{ $performer->category_label }} <span>TEAM
                                                         {{ strtoupper($performer->department->name ?? 'N/A') }}IANS</span>
