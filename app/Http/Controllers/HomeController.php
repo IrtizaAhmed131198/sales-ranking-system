@@ -141,8 +141,8 @@ class HomeController extends Controller
         // 5. Marquee Data — direct from existing records, no separate events table
 
         // New Sale — already latest sale
-        $latestSale = Sale::with('user')->orderBy('date', 'desc')->first();
-        dd($latestSale);
+        $latestSale = Sale::with('user')->orderBy('id', 'desc')->first();
+        
         $salesText = $latestSale
             ? "💰 New Sale by {$latestSale->user->name}! (\$".number_format($latestSale->amount, 2).")"
             : "No sales recorded yet.";
