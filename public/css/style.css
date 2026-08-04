@@ -1100,6 +1100,13 @@ div[id^="particles-js"],
     animation-play-state: paused;
 }
 
+.league_top_logo{
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+
 @keyframes marqueeMove {
     from {
         transform: translateX(0);

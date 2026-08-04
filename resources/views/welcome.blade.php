@@ -148,6 +148,7 @@
                                         <div class="leaderboard {{ $tableIndex > 0 ? 'mt-3' : '' }}">
 
                                             <h4>
+                                                <img src="{{ asset($lb['benchmark']->front_sale_logo) }}" alt="{{ $lb['benchmark']->name }}" class="img-fluid league_top_logo">
                                                 {{ strtoupper($table['role']->name) }}
                                                 ({{ $lb['benchmark']->name }} -
                                                 ${{ number_format($table['target_value']) }})
