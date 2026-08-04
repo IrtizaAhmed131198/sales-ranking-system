@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sale;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Events\RankingUpdated;
 
 class SalesController extends Controller
 {
@@ -59,6 +60,8 @@ class SalesController extends Controller
 
         Sale::create($request->only('user_id', 'amount', 'date'));
 
+        event(new RankingUpdated());
+
         return redirect()->route('sales.index')->with('success', 'Sales entry recorded successfully.');
     }
 
@@ -78,12 +81,16 @@ class SalesController extends Controller
 
         $sale->update($request->only('user_id', 'amount', 'date'));
 
+
+
         return redirect()->route('sales.index')->with('success', 'Sales entry updated successfully.');
     }
 
     public function destroy(Sale $sale)
     {
         $sale->delete();
+
+        event(new RankingUpdated());
 
         if (request()->ajax()) {
             return response()->json(['success' => 'Sales entry deleted successfully.']);

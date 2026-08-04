@@ -190,7 +190,7 @@ const ParticlesManager = (() => {
             const canvas = pjs?.pJS?.canvas?.el;
             if (canvas && container.contains(canvas)) {
                 try { pjs.pJS.fn.vendors.destroypJS(); } catch (_) { /* ignore */ }
-                window.pJSDom.splice(i, 1);
+                if (window.pJSDom) window.pJSDom.splice(i, 1);
             }
         }
     };
@@ -483,6 +483,7 @@ const RankTracker = (() => {
         let leaderboardImproved = false;
         let departmentImproved = false;
         let starPerformerImproved = false;
+        let newSaleMade = false;
 
         const newLeaderboard = _getLeaderboardRanks(newDoc);
         newLeaderboard.forEach((newData, key) => {
@@ -490,6 +491,7 @@ const RankTracker = (() => {
                 const oldData = _oldLeaderboard.get(key);
 
                 if (newData.sales > oldData.sales) {
+                    newSaleMade = true;
                     _addMarqueeMessage(`💰 New Sale by ${newData.name}! ($${newData.sales - oldData.sales})`);
                 }
 
@@ -500,6 +502,11 @@ const RankTracker = (() => {
                 if (newData.rank < oldData.rank) {
                     leaderboardImproved = true;
                     _addMarqueeMessage(`📈 ${newData.name} moved UP to rank #${newData.rank + 1}!`);
+                }
+            } else {
+                if (newData.sales > 0) {
+                    newSaleMade = true;
+                    _addMarqueeMessage(`💰 New Entry by ${newData.name}! ($${newData.sales})`);
                 }
             }
         });
@@ -530,14 +537,14 @@ const RankTracker = (() => {
             }
         });
 
-        if (leaderboardImproved) {
+        if (leaderboardImproved || newSaleMade) {
             playSound(window.SoundPaths.leaderboard);
         }
 
         if (departmentImproved || starPerformerImproved) {
             setTimeout(() => {
                 playSound(window.SoundPaths.milestone);
-            }, leaderboardImproved ? 1500 : 0);
+            }, (leaderboardImproved || newSaleMade) ? 1500 : 0);
         }
 
         _oldLeaderboard = newLeaderboard;
@@ -562,6 +569,13 @@ const RealtimeManager = (() => {
     'use strict';
 
     let _debounce = null;
+
+    const _playNewSaleSound = () => {
+        if (!window.SoundPaths?.newSale) return;
+        const audio = new Audio(window.SoundPaths.newSale);
+        audio.volume = 0.8;
+        audio.play().catch(e => console.log('New Sale Audio play failed:', e));
+    };
 
     const init = () => {
 
@@ -589,6 +603,9 @@ const RealtimeManager = (() => {
 
             console.log("🔥 ranking.updated received", data);
 
+            // 👇 Guaranteed sale event — bajao turant, DOM diff ka wait mat karo
+            _playNewSaleSound();
+
             clearTimeout(_debounce);
 
             _debounce = setTimeout(() => {
@@ -603,7 +620,6 @@ const RealtimeManager = (() => {
     return { init };
 
 })();
-
 
 // ------------------------------------------------------------------
 // 8. DashboardUpdater  (refresh-locked, slide-level DOM diffing)
@@ -668,7 +684,9 @@ const DashboardUpdater = (() => {
         _busy = true;
 
         try {
-            const res = await fetch(window.location.href);
+            const url = new URL(window.location.href);
+            url.searchParams.set('_t', Date.now());
+            const res = await fetch(url.toString(), { cache: 'no-store' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const html = await res.text();
             const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -707,6 +725,7 @@ const DashboardUpdater = (() => {
 // 9. Boot
 // ------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
+    try { AudioUnlocker.init(); } catch (e) { console.error('Boot: AudioUnlocker failed', e); }
     try { SwiperManager.initAll(); } catch (e) { console.error('Boot: SwiperManager failed', e); }
     try { ParticlesManager.init(); } catch (e) { console.error('Boot: ParticlesManager failed', e); }
     try { AchievementManager.init(); } catch (e) { console.error('Boot: AchievementManager failed', e); }
@@ -746,3 +765,38 @@ window.dashboardDebug = {
 
 };
 console.log("SCRIPT JS FINISHED");
+
+// ------------------------------------------------------------------
+// Audio Unlock — attempt silent unlock on load (kiosk fallback)
+// ------------------------------------------------------------------
+const AudioUnlocker = (() => {
+    'use strict';
+    let _attempted = false;
+
+    const attempt = () => {
+        if (_attempted) return;
+        _attempted = true;
+
+        [window.SoundPaths?.newSale, window.SoundPaths?.leaderboard, window.SoundPaths?.milestone]
+            .filter(Boolean)
+            .forEach(src => {
+                const a = new Audio(src);
+                a.muted = true;
+                a.play().then(() => {
+                    a.pause();
+                    a.currentTime = 0;
+                }).catch(() => {});
+            });
+    };
+
+    const init = () => {
+        attempt(); // try immediately on load
+
+        // Also retry on ANY interaction, in case it's ever available
+        ['click', 'touchstart', 'keydown'].forEach(evt =>
+            document.addEventListener(evt, attempt, { once: true })
+        );
+    };
+
+    return { init };
+})();
