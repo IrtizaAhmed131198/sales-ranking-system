@@ -143,7 +143,7 @@ class HomeController extends Controller
         // New Sale — already latest sale
         $latestSale = Sale::with('user')->orderBy('date', 'desc')->first();
         $salesText = $latestSale
-            ? "💰 New Sale by {$latestSale->user->name}! (\${$latestSale->amount})"
+            ? "💰 New Sale by {$latestSale->user->name}! (\$".number_format($latestSale->amount, 2).")"
             : "No sales recorded yet.";
 
         // Target Completed — jis user ne sabse recently 100%+ cross kiya (based on last sale date)
