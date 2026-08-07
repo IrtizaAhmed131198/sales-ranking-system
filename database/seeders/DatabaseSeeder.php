@@ -75,9 +75,9 @@ class DatabaseSeeder extends Seeder
                     'email' => $email,
                     'department_id' => $dept->id,
                     'benchmark_id' => $benchmarksList[array_rand($benchmarksList)],
-                    'role_id' => $rolesList[array_rand($rolesList)],
                     'is_admin' => false,
                 ]);
+                $user->roles()->sync([$rolesList[array_rand($rolesList)]]);
 
                 // Create Target for user (between 3000 and 12000)
                 $targetAmount = rand(30, 120) * 100;

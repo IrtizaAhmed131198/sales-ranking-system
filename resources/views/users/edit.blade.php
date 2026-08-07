@@ -63,16 +63,16 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="role_id" class="form-label text-secondary small">Salesperson Role (Optional)</label>
-                    <select name="role_id" id="role_id" class="form-select @error('role_id') is-invalid @enderror">
-                        <option value="">Select Role</option>
+                    <label for="roles" class="form-label text-secondary small">Salesperson Roles (Optional)</label>
+                    <select name="roles[]" id="roles" class="form-select @error('roles') is-invalid @enderror" multiple>
                         @foreach($roles as $role)
-                            <option value="{{ $role->id }}" {{ old('role_id', $user->role_id) == $role->id ? 'selected' : '' }}>
+                            <option value="{{ $role->id }}" {{ in_array($role->id, old('roles', $user->roles->pluck('id')->toArray())) ? 'selected' : '' }}>
                                 {{ $role->name }}
                             </option>
                         @endforeach
                     </select>
-                    @error('role_id')
+                    <div class="form-text">Hold Ctrl (Windows) or Cmd (Mac) to select multiple roles.</div>
+                    @error('roles')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

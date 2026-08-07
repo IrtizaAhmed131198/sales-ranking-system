@@ -11,7 +11,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $users = User::where('is_admin', false)->with(['department', 'role', 'benchmark'])->select('users.*');
+            $users = User::where('is_admin', false)->with(['department', 'roles', 'benchmark'])->select('users.*');
             return \Yajra\DataTables\Facades\DataTables::of($users)
                 ->addColumn('photo', function ($user) {
                     $url = $user->image_path ? asset($user->image_path) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=6366f1&color=fff';
@@ -21,7 +21,7 @@ class UserController extends Controller
                     return $user->department ? $user->department->name : 'No Department';
                 })
                 ->addColumn('role_name', function ($user) {
-                    return $user->role ? $user->role->name : 'No Role';
+                    return $user->roles->isNotEmpty() ? $user->roles->pluck('name')->implode(', ') : 'No Role';
                 })
                 ->addColumn('benchmark_name', function ($user) {
                     return $user->benchmark ? $user->benchmark->name : 'No Benchmark';
@@ -68,7 +68,8 @@ class UserController extends Controller
             'email' => 'nullable|email|unique:users,email',
             'department_id' => 'nullable|exists:departments,id',
             'benchmark_id' => 'nullable|exists:benchmarks,id',
-            'role_id' => 'nullable|exists:roles,id',
+            'roles' => 'nullable|array',
+            'roles.*' => 'exists:roles,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -80,16 +81,19 @@ class UserController extends Controller
             $imagePath = 'uploads/users/' . $filename;
         }
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'department_id' => $request->department_id,
             'benchmark_id' => $request->benchmark_id,
-            'role_id' => $request->role_id,
             'image_path' => $imagePath,
             'is_admin' => false,
             'is_active' => $request->boolean('is_active', true),
         ]);
+
+        if ($request->has('roles')) {
+            $user->roles()->sync($request->roles);
+        }
 
         return redirect()->route('users.index')->with('success', 'Salesperson created successfully.');
     }
@@ -117,7 +121,8 @@ class UserController extends Controller
             'email' => 'nullable|email|unique:users,email,' . $user->id,
             'department_id' => 'nullable|exists:departments,id',
             'benchmark_id' => 'nullable|exists:benchmarks,id',
-            'role_id' => 'nullable|exists:roles,id',
+            'roles' => 'nullable|array',
+            'roles.*' => 'exists:roles,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -137,10 +142,15 @@ class UserController extends Controller
             'email' => $request->email,
             'department_id' => $request->department_id,
             'benchmark_id' => $request->benchmark_id,
-            'role_id' => $request->role_id,
             'image_path' => $imagePath,
             'is_active' => $request->boolean('is_active'),
         ]);
+
+        if ($request->has('roles')) {
+            $user->roles()->sync($request->roles);
+        } else {
+            $user->roles()->detach();
+        }
 
         return redirect()->route('users.index')->with('success', 'Salesperson updated successfully.');
     }

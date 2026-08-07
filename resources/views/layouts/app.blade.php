@@ -369,6 +369,33 @@
         .select2-container--default .select2-results__option--selected {
             background-color: #161c2d;
         }
+
+        .select2-container--default .select2-selection--multiple {
+            background-color: #161c2d !important;
+            border: 1px solid #222b45 !important;
+            border-radius: 8px !important;
+            min-height: 42px !important;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #2563eb !important;
+            border: 1px solid #1d4ed8 !important;
+            color: #fff !important;
+            border-radius: 4px !important;
+            padding: 2px 8px !important;
+            margin-top: 6px !important;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #fff !important;
+            margin-right: 6px !important;
+            border: none !important;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+            color: #f87171 !important;
+            background-color: transparent !important;
+        }
     </style>
     @yield('styles')
 </head>

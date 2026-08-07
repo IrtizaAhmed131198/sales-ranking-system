@@ -62,10 +62,12 @@ class HomeController extends Controller
                 $salespersons = User::where('is_admin', false)
                     ->where('is_active', true)
                     ->where('benchmark_id', $bm->id)
-                    ->where('role_id', $role->id)
+                    ->whereHas('roles', function($q) use ($role) {
+                        $q->where('roles.id', $role->id);
+                    })
                     ->with(['targets', 'sales' => function($q) use ($currentMonthStart, $currentMonthEnd) {
                         $q->whereBetween('date', [$currentMonthStart, $currentMonthEnd]);
-                    }, 'department'])
+                    }, 'department', 'roles'])
                     ->get()
                     ->map(function ($user) {
                         $user->total_target = $user->targets->sum('target_amount');
@@ -110,7 +112,7 @@ class HomeController extends Controller
                 ->whereHas('sales', function ($q) use ($startDate, $endDate) {
                     $q->whereBetween('date', [$startDate, $endDate]);
                 })
-                ->with(['targets', 'department', 'role'])
+                ->with(['targets', 'department', 'roles'])
                 ->get()
                 ->map(function ($user) use ($startDate, $endDate) {
                     $user->total_target = $user->targets->sum('target_amount');
@@ -124,6 +126,7 @@ class HomeController extends Controller
                 ->map(function ($user) use ($label, $desc) {
                     $user->category_label = $label;
                     $user->category_desc = $desc;
+                    $user->role_names = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->implode(', ') : 'Salesperson';
                     return $user;
                 })
                 ->first();

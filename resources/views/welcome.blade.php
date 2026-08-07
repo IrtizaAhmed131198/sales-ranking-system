@@ -309,7 +309,7 @@
                                                         {{ strtoupper($performer->department->name ?? 'N/A') }}IANS</span>
                                                 </h2>
                                                 <h3>{{ strtoupper($performer->name) }}
-                                                    <span>{{ strtoupper($performer->role->name ?? 'Salesperson') }}</span>
+                                                    <span>{{ strtoupper($performer->role_names ?? 'Salesperson') }}</span>
                                                 </h3>
 
                                                 <div class="rating">

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'image_path', 'department_id', 'benchmark_id', 'role_id', 'is_admin', 'is_active'])]
+#[Fillable(['name', 'email', 'password', 'image_path', 'department_id', 'benchmark_id', 'is_admin', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -27,9 +27,9 @@ class User extends Authenticatable
         return $this->belongsTo(Benchmark::class);
     }
 
-    public function role()
+    public function roles()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsToMany(Role::class);
     }
 
     public function targets()
