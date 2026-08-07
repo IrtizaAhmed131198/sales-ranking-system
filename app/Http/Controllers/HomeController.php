@@ -14,25 +14,36 @@ class HomeController extends Controller
 {
     public function index()
     {
+        $currentMonthStart = now()->startOfMonth()->toDateString();
+        $currentMonthEnd = now()->endOfMonth()->toDateString();
+
         // 1. Fetch departments with their top 3 sellers, sorted by total sales descending
         $departments = Department::with(['users' => function ($q) {
             $q->where('is_active', true);
-        }, 'users.sales'])->get()->map(function ($dept) {
+        }, 'users.sales' => function ($q) use ($currentMonthStart, $currentMonthEnd) {
+            $q->whereBetween('date', [$currentMonthStart, $currentMonthEnd]);
+        }])->get()->map(function ($dept) {
             $dept->total_sales_sum  = 0;
             $dept->total_target_sum = (float) ($dept->target ?? 0);
 
             foreach ($dept->users as $user) {
                 if (!$user->is_admin) {
-                    $dept->total_sales_sum += $user->sales->sum('amount');
+                    $user->total_sales = $user->sales->sum('amount');
+                    $dept->total_sales_sum += $user->total_sales;
                 }
             }
+
+            $dept->top_sellers = $dept->users->where('is_admin', false)
+                ->sortByDesc('total_sales')
+                ->take(3)
+                ->values();
 
             $dept->dept_performance_percentage = $dept->total_target_sum > 0
                 ? round(($dept->total_sales_sum / $dept->total_target_sum) * 100, 2)
                 : 0;
 
             return $dept;
-        })->sortByDesc('dept_performance_percentage')->values();
+        })->sortByDesc('total_sales_sum')->values();
 
         // 2. Fetch leaderboards grouped by benchmark (each slide contains both roles stacked)
         $benchmarks = \App\Models\Benchmark::all()->sortByDesc('front_sale_value');
@@ -52,7 +63,9 @@ class HomeController extends Controller
                     ->where('is_active', true)
                     ->where('benchmark_id', $bm->id)
                     ->where('role_id', $role->id)
-                    ->with(['targets', 'sales', 'department'])
+                    ->with(['targets', 'sales' => function($q) use ($currentMonthStart, $currentMonthEnd) {
+                        $q->whereBetween('date', [$currentMonthStart, $currentMonthEnd]);
+                    }, 'department'])
                     ->get()
                     ->map(function ($user) {
                         $user->total_target = $user->targets->sum('target_amount');
