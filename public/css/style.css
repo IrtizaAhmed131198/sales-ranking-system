@@ -214,7 +214,7 @@ span {
     border-bottom-width: 0 !important;
 }
 section.sec-main {
-    height: 100vh;
+    height: auto;
     background-image: url("../images/bg.jpg");
     background-position: center;
     background-repeat: no-repeat;
