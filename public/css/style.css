@@ -1117,7 +1117,7 @@ div[id^="particles-js"],
     }
 }
 
-@media only screen and (max-width: 1440px) {
+@media only screen and (max-width: 1400px) {
     header {
         margin-bottom: 26px;
     }
