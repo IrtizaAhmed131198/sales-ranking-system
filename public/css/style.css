@@ -1261,4 +1261,7 @@ section.sec-main .container-fluid {
 
     font-size: 50px;
 }
+header {
+    height: 100px;
+}
 }
