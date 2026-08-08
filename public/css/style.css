@@ -1161,3 +1161,10 @@ div[id^="particles-js"],
         height: 367px;
     }
 }
+
+/* TV specific scaling to counter OS-level 200% zoom on 1920x1080 screens (effective 960x540) */
+@media screen and (min-width: 900px) and (max-width: 1000px) and (max-height: 600px) and (orientation: landscape) {
+    body {
+        zoom: 0.5;
+    }
+}
