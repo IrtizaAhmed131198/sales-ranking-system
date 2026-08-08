@@ -1171,4 +1171,65 @@ div[id^="particles-js"],
     section.sec-main {
         min-height: 200vh;
     }
+    .team-box {
+
+    padding: 30px 10px;
+   
+}
+section.sec-main .container-fluid {
+    max-width: 1875px;
+}   
+.leaderboard {
+
+ 
+    height: 413px;
+  
+}
+.sales-table thead th {
+ 
+    font-size: 16px;
+  padding: 16px 15px;
+
+}
+
+.leaderboard h4 {
+  
+    font-size: 18px;
+    padding-top: 11px;
+   
+}
+
+.sales-table tbody td {
+  
+    padding: 12px 11px;
+ 
+    font-size: 16px;
+
+}
+.performer-box {
+   
+    height: 410px;
+  
+}
+
+.performer-slider {
+   
+    height: 413px;
+ 
+}
+.performer-slider7 {
+    height: 410px;
+ 
+    margin-top: 22px;
+}
+
+.goft-box {
+   
+      height: 470px;
+}
+
+.performer-slider7 .swiper-slide {
+  
+    height: 406px !important;
+}
 }
