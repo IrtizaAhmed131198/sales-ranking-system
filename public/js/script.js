@@ -79,7 +79,7 @@ const SwiperManager = (() => {
                 spaceBetween: 0,
                 initialSlide: startSlide,
                 autoplay: {
-                    delay: 10000,
+                    delay: 20000,
                     disableOnInteraction: false,
                     reverseDirection: cfg.reverse,
                 },
