@@ -1168,6 +1168,11 @@ div[id^="particles-js"],
     body {
         zoom: 0.5;
     }
+
+    .team-box {
+    padding: 18px 10px;
+    }
+
     section.sec-main {
         min-height: 200vh;
     }
@@ -1182,7 +1187,7 @@ section.sec-main .container-fluid {
 .leaderboard {
 
  
-    height: 413px;
+    height: 452px;
   
 }
 .sales-table thead th {
@@ -1208,17 +1213,17 @@ section.sec-main .container-fluid {
 }
 .performer-box {
    
-    height: 410px;
+    height: 450px;
   
 }
 
 .performer-slider {
    
-    height: 413px;
+    height: 453px;
  
 }
 .performer-slider7 {
-    height: 410px;
+    height: 440px;
  
     margin-top: 22px;
 }
@@ -1230,7 +1235,7 @@ section.sec-main .container-fluid {
 
 .performer-slider7 .swiper-slide {
   
-    height: 406px !important;
+    height: 432px !important;
 }
 .performer-slider2 {
 
