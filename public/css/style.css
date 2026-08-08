@@ -1206,9 +1206,8 @@ section.sec-main .container-fluid {
 
 .sales-table tbody td {
   
-    padding: 12px 11px;
- 
-    font-size: 16px;
+            padding: 9px 11px;
+        font-size: 13px;
 
 }
 .performer-box {
@@ -1240,5 +1239,26 @@ section.sec-main .container-fluid {
 .performer-slider2 {
 
     height: 920px;
+}
+.custom-nav img {
+    width: 225px;
+}
+
+.top-marquee-content {
+  
+    font-size: 28px;
+  
+}
+
+.top-marquee {
+
+    height: 70px;
+
+   
+}
+
+.ranking-num h3 {
+
+    font-size: 50px;
 }
 }
