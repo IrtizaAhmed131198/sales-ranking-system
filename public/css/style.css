@@ -1166,5 +1166,10 @@ div[id^="particles-js"],
 @media screen and (min-width: 900px) and (max-width: 1000px) and (max-height: 600px) and (orientation: landscape) {
     body {
         zoom: 0.5;
+        
     }
+    section.sec-main {
+    height: 100vh !important;
+  
+}
 }
