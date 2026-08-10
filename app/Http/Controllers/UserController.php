@@ -123,7 +123,7 @@ class UserController extends Controller
             'benchmark_id' => 'nullable|exists:benchmarks,id',
             'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
         ]);
 
         $imagePath = $user->image_path;
