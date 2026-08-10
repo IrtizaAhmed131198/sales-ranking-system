@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Department;
+use App\Models\Benchmark;
+use App\Models\Role;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
@@ -12,7 +15,7 @@ class UserController extends Controller
     {
         if ($request->ajax()) {
             $users = User::where('is_admin', false)->with(['department', 'roles', 'benchmark'])->select('users.*');
-            return \Yajra\DataTables\Facades\DataTables::of($users)
+            return DataTables::of($users)
                 ->addColumn('photo', function ($user) {
                     $url = $user->image_path ? asset($user->image_path) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=6366f1&color=fff';
                     return '<img src="' . $url . '" alt="' . $user->name . '" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">';
@@ -56,8 +59,8 @@ class UserController extends Controller
     public function create()
     {
         $departments = Department::all();
-        $benchmarks = \App\Models\Benchmark::all();
-        $roles = \App\Models\Role::all();
+        $benchmarks = Benchmark::all();
+        $roles = Role::all();
         return view('users.create', compact('departments', 'benchmarks', 'roles'));
     }
 
@@ -105,8 +108,8 @@ class UserController extends Controller
         }
 
         $departments = Department::all();
-        $benchmarks = \App\Models\Benchmark::all();
-        $roles = \App\Models\Role::all();
+        $benchmarks = Benchmark::all();
+        $roles = Role::all();
         return view('users.edit', compact('user', 'departments', 'benchmarks', 'roles'));
     }
 

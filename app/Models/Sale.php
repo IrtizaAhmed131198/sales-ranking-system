@@ -9,7 +9,11 @@ class Sale extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'amount', 'date'];
+    protected $fillable = ['user_id', 'amount', 'date', 'is_refunded'];
+
+    protected $casts = [
+        'is_refunded' => 'boolean',
+    ];
 
     public function user()
     {

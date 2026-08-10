@@ -32,6 +32,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('departments', DepartmentController::class);
     Route::resource('targets', TargetController::class);
     Route::resource('sales', SalesController::class);
+    Route::post('sales/{sale}/refund', [SalesController::class, 'refund'])->name('sales.refund');
     Route::resource('benchmarks', BenchmarkController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('notices', NoticeController::class);

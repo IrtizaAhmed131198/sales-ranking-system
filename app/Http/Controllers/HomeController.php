@@ -19,31 +19,32 @@ class HomeController extends Controller
 
         // 1. Fetch departments with their top 3 sellers, sorted by total sales descending
         $departments = Department::with(['users' => function ($q) {
-            $q->where('is_active', true);
-        }, 'users.sales' => function ($q) use ($currentMonthStart, $currentMonthEnd) {
-            $q->whereBetween('date', [$currentMonthStart, $currentMonthEnd]);
-        }])->get()->map(function ($dept) {
-            $dept->total_sales_sum  = 0;
-            $dept->total_target_sum = (float) ($dept->target ?? 0);
+                $q->where('is_active', true);
+            }, 'users.sales' => function ($q) use ($currentMonthStart, $currentMonthEnd) {
+                $q->whereBetween('date', [$currentMonthStart, $currentMonthEnd])
+                  ->where('is_refunded', false);
+            }])->get()->map(function ($dept) {
+                $dept->total_sales_sum  = 0;
+                $dept->total_target_sum = (float) ($dept->target ?? 0);
 
-            foreach ($dept->users as $user) {
-                if (!$user->is_admin) {
-                    $user->total_sales = $user->sales->sum('amount');
-                    $dept->total_sales_sum += $user->total_sales;
+                foreach ($dept->users as $user) {
+                    if (!$user->is_admin) {
+                        $user->total_sales = $user->sales->sum('amount');
+                        $dept->total_sales_sum += $user->total_sales;
+                    }
                 }
-            }
 
-            $dept->top_sellers = $dept->users->where('is_admin', false)
-                ->sortByDesc('total_sales')
-                ->take(3)
-                ->values();
+                $dept->top_sellers = $dept->users->where('is_admin', false)
+                    ->sortByDesc('total_sales')
+                    ->take(3)
+                    ->values();
 
-            $dept->dept_performance_percentage = $dept->total_target_sum > 0
-                ? round(($dept->total_sales_sum / $dept->total_target_sum) * 100, 2)
-                : 0;
+                $dept->dept_performance_percentage = $dept->total_target_sum > 0
+                    ? round(($dept->total_sales_sum / $dept->total_target_sum) * 100, 2)
+                    : 0;
 
-            return $dept;
-        })->sortByDesc('total_sales_sum')->values();
+                return $dept;
+            })->sortByDesc('dept_performance_percentage')->values();
 
         // 2. Fetch leaderboards grouped by benchmark (each slide contains both roles stacked)
         $benchmarks = \App\Models\Benchmark::all()->sortByDesc('front_sale_value');
@@ -66,7 +67,8 @@ class HomeController extends Controller
                         $q->where('roles.id', $role->id);
                     })
                     ->with(['targets', 'sales' => function($q) use ($currentMonthStart, $currentMonthEnd) {
-                        $q->whereBetween('date', [$currentMonthStart, $currentMonthEnd]);
+                        $q->whereBetween('date', [$currentMonthStart, $currentMonthEnd])
+                          ->where('is_refunded', false);
                     }, 'department', 'roles'])
                     ->get()
                     ->map(function ($user) {
@@ -110,9 +112,12 @@ class HomeController extends Controller
             return User::where('is_admin', false)
                 ->where('is_active', true)
                 ->whereHas('sales', function ($q) use ($startDate, $endDate) {
-                    $q->whereBetween('date', [$startDate, $endDate]);
+                    $q->whereBetween('date', [$startDate, $endDate])
+                      ->where('is_refunded', false);
                 })
-                ->with(['targets', 'department', 'roles'])
+                ->with(['targets', 'department', 'roles', 'sales' => function($q) {
+                    $q->where('is_refunded', false);
+                }])
                 ->get()
                 ->map(function ($user) use ($startDate, $endDate) {
                     $user->total_target = $user->targets->sum('target_amount');
@@ -157,15 +162,20 @@ class HomeController extends Controller
         // 5. Marquee Data — direct from existing records, no separate events table
 
         // New Sale — already latest sale
-        $latestSale = Sale::with('user')->orderBy('id', 'desc')->first();
-        
+        $latestSale = Sale::with('user')
+            ->where('is_refunded', false)
+            ->orderBy('id', 'desc')
+            ->first();
+
         $salesText = $latestSale
             ? "💰 New Sale by {$latestSale->user->name}! (\$".number_format($latestSale->amount, 2).")"
             : "No sales recorded yet.";
 
         // Target Completed — jis user ne sabse recently 100%+ cross kiya (based on last sale date)
         $completedUser = User::where('is_admin', false)->where('is_active', true)
-            ->with(['targets', 'sales'])
+            ->with(['targets', 'sales' => function($q) {
+                $q->where('is_refunded', false);
+            }])
             ->get()
             ->map(function ($u) {
                 $u->total_target = $u->targets->sum('target_amount');

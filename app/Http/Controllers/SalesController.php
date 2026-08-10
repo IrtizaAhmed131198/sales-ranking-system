@@ -24,11 +24,22 @@ class SalesController extends Controller
                     return date('M d, Y', strtotime($sale->date));
                 })
                 ->addColumn('formatted_amount', function ($sale) {
+                    if ($sale->is_refunded) {
+                        return '<span class="text-danger text-decoration-line-through">$' . number_format($sale->amount, 2) . '</span> <span class="badge bg-danger ms-1">Refunded</span>';
+                    }
                     return '$' . number_format($sale->amount, 2);
                 })
                 ->addColumn('actions', function ($sale) {
+                    $refundBtnTitle = $sale->is_refunded ? 'Restore Sale' : 'Refund Sale';
+                    $refundBtnIcon = $sale->is_refunded ? 'fa-solid fa-rotate-left' : 'fa-solid fa-hand-holding-dollar';
+                    $refundBtnClass = $sale->is_refunded ? 'btn-outline-success' : 'btn-outline-warning';
+                    $refundConfirmMsg = $sale->is_refunded ? 'Are you sure you want to restore this refunded sale?' : 'Are you sure you want to mark this sale as refunded?';
+
                     return '
                         <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-sm ' . $refundBtnClass . ' refund-btn" data-url="' . route('sales.refund', $sale->id) . '" data-table-id="#salesTable" data-confirm="' . $refundConfirmMsg . '" title="' . $refundBtnTitle . '">
+                                <i class="' . $refundBtnIcon . '"></i>
+                            </button>
                             <a href="' . route('sales.edit', $sale->id) . '" class="btn btn-sm btn-outline-info" title="Edit">
                                 <i class="fa-solid fa-pencil"></i>
                             </a>
@@ -38,7 +49,7 @@ class SalesController extends Controller
                         </div>
                     ';
                 })
-                ->rawColumns(['actions'])
+                ->rawColumns(['formatted_amount', 'actions'])
                 ->make(true);
         }
         return view('sales.index');
@@ -96,5 +107,19 @@ class SalesController extends Controller
             return response()->json(['success' => 'Sales entry deleted successfully.']);
         }
         return redirect()->route('sales.index')->with('success', 'Sales entry deleted successfully.');
+    }
+
+    public function refund(Sale $sale)
+    {
+        $sale->update(['is_refunded' => !$sale->is_refunded]);
+
+        event(new RankingUpdated());
+
+        $status = $sale->is_refunded ? 'marked as refunded' : 'restored';
+        
+        if (request()->ajax()) {
+            return response()->json(['success' => "Sales entry $status successfully."]);
+        }
+        return redirect()->route('sales.index')->with('success', "Sales entry $status successfully.");
     }
 }

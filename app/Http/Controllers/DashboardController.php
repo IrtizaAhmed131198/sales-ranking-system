@@ -18,7 +18,10 @@ class DashboardController extends Controller
         // 1. Fetch salespersons with their flat targets, and sum all their sales
         $query = User::where('is_admin', false)
             ->join('targets', 'users.id', '=', 'targets.user_id')
-            ->leftJoin('sales', 'users.id', '=', 'sales.user_id')
+            ->leftJoin('sales', function($join) {
+                $join->on('users.id', '=', 'sales.user_id')
+                     ->where('sales.is_refunded', false);
+            })
             ->select(
                 'users.id',
                 'users.name',

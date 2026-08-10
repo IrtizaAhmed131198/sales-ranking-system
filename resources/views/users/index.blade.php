@@ -60,7 +60,7 @@
                     }
                     return '<span class="text-secondary small">' + data + '</span>';
                 }},
-                { data: 'role_name', name: 'role.name', render: function(data) {
+                { data: 'role_name', name: 'roles.name', orderable: false, searchable: false, render: function(data) {
                     return '<span class="badge bg-danger bg-opacity-20 text-danger text-white border border-danger border-opacity-30 px-2.5 py-1.5">' + data + '</span>';
                 }},
                 { data: 'status', name: 'is_active', orderable: true },

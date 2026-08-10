@@ -61,6 +61,33 @@
                 ordering: true,
                 order: [[3, "desc"]] // Sort by date desc by default
             });
+
+            $(document).on('click', '.refund-btn', function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
+                var button = $(this);
+                var url = button.data('url');
+                var tableId = button.data('table-id');
+                var confirmMsg = button.data('confirm') || 'Are you sure?';
+
+                if (confirm(confirmMsg)) {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (tableId && $.fn.DataTable.isDataTable(tableId)) {
+                                $(tableId).DataTable().ajax.reload(null, false);
+                            } else {
+                                window.location.reload();
+                            }
+                        }
+                    });
+                }
+            });
         });
     </script>
 @endsection
