@@ -572,7 +572,7 @@ h3.bluew span {
 .sales-table img.profile-img {
     width: 38px;
     height: 38px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 50%;
     border: 2px solid rgba(255, 255, 255, 0.1);
 }
