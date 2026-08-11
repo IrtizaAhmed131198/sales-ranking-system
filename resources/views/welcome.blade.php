@@ -214,7 +214,7 @@
                                                                 data-percent="{{ $sp->performance_percentage }}"
                                                                 data-sales="{{ $sp->total_sales }}"
                                                                 data-achieved="{{ $sp->performance_percentage >= 100 ? 1 : 0 }}"
-                                                                data-image="{{ $sp->image ? asset($sp->image_path) : asset('images/default.jpg') }}">
+                                                                data-image="{{ asset($sp->image_path) }}">
 
                                                                 <td>
                                                                     <div class="d-flex align-items-center">

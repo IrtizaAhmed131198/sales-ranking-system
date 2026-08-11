@@ -434,9 +434,9 @@ section.sec-main .container-fluid {
 .imgsa {
     position: absolute;
     right: 0px;
-    bottom: 0px;
-    width: 40% !important;
-    height: 260px !important;
+    bottom: -8px;
+    width: 45% !important;
+    height: 300px !important;
 }
 
 .imgsa img {
