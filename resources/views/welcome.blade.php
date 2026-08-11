@@ -207,7 +207,7 @@
                                                             @endphp
 
                                                             <tr class="{{ $rankClass }}"
-                                                                @if($sp->total_sales == 0) style="opacity: 0.4; filter: blur(0.6px);" @endif
+                                                                @if($sp->total_sales == 0) style="opacity: 0.4; filter: blur(3.6px);" @endif
                                                                 data-id="{{ $sp->id }}"
                                                                 data-name="{{ strtoupper($sp->name) }}"
                                                                 data-league="{{ $lb['benchmark']->name }}"
