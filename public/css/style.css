@@ -1264,6 +1264,11 @@ section.sec-main .container-fluid {
 header {
     height: 100px;
 }
+
+.ranking-num p {
+    font-size: 18px;
+}
+
 }
 
 /* =========================================================
@@ -1407,7 +1412,7 @@ header {
     }
 
     .ranking-num p {
-        font-size: 16px;
+        font-size: 18px;
     }
 
     .ranking-num h4 {
