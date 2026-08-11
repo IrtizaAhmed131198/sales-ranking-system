@@ -6,6 +6,7 @@ use App\Models\Sale;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Events\RankingUpdated;
+use Yajra\DataTables\Facades\DataTables;
 
 class SalesController extends Controller
 {
@@ -13,7 +14,7 @@ class SalesController extends Controller
     {
         if ($request->ajax()) {
             $sales = Sale::with('user.department')->select('sales.*');
-            return \Yajra\DataTables\Facades\DataTables::of($sales)
+            return DataTables::of($sales)
                 ->addColumn('user_name', function ($sale) {
                     return $sale->user ? $sale->user->name : 'N/A';
                 })
@@ -116,7 +117,7 @@ class SalesController extends Controller
         event(new RankingUpdated());
 
         $status = $sale->is_refunded ? 'marked as refunded' : 'restored';
-        
+
         if (request()->ajax()) {
             return response()->json(['success' => "Sales entry $status successfully."]);
         }
