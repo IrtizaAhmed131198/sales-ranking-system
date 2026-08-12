@@ -15,7 +15,7 @@
             <form action="{{ route('targets.update', $target->id) }}" method="POST">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="mb-3">
                     <label for="user_id" class="form-label text-secondary small">Salesperson</label>
                     <select name="user_id" id="user_id" class="form-select ajax-select @error('user_id') is-invalid @enderror" required>
@@ -103,13 +103,13 @@
             var userId = $(this).val();
             var roleSelect = $('#role_id');
             var oldRoleId = "{{ old('role_id', $target->role_id) }}";
-            
+
             roleSelect.html('<option value="">Loading...</option>');
             roleSelect.prop('disabled', true);
 
             if (userId) {
                 $.ajax({
-                    url: '/users/' + userId + '/roles',
+                    url: '{{ route('users.roles', ':id') }}'.replace(':id', userId),
                     type: 'GET',
                     success: function(data) {
                         roleSelect.empty();
