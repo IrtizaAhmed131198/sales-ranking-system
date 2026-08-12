@@ -28,7 +28,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('admin', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard', [DashboardController::class, 'index']);
 
-    Route::get('users/search/ajax', [UserController::class, 'search'])->name('users.search');
+    Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
+    Route::get('/users/{user}/roles', [UserController::class, 'roles'])->name('users.roles');
     Route::resource('users', UserController::class);
     Route::resource('departments', DepartmentController::class);
     Route::resource('targets', TargetController::class);

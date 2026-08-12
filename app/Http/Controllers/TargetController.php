@@ -11,13 +11,16 @@ class TargetController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $targets = Target::with('user.department')->select('targets.*');
+            $targets = Target::with(['user.department', 'role'])->select('targets.*');
             return \Yajra\DataTables\Facades\DataTables::of($targets)
                 ->addColumn('user_name', function ($target) {
                     return $target->user ? $target->user->name : 'N/A';
                 })
                 ->addColumn('department_name', function ($target) {
                     return ($target->user && $target->user->department) ? $target->user->department->name : 'No Department';
+                })
+                ->addColumn('role_name', function ($target) {
+                    return $target->role ? $target->role->name : 'N/A';
                 })
                 ->addColumn('formatted_amount', function ($target) {
                     return '$' . number_format($target->target_amount, 2);
@@ -50,18 +53,21 @@ class TargetController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
+            'role_id' => 'required|exists:roles,id',
             'target_amount' => 'required|numeric|min:0.01',
         ]);
 
-        // Enforce unique target per salesperson
-        $exists = Target::where('user_id', $request->user_id)->exists();
+        // Enforce unique target per salesperson AND role
+        $exists = Target::where('user_id', $request->user_id)
+            ->where('role_id', $request->role_id)
+            ->exists();
 
         if ($exists) {
-            return back()->withErrors(['user_id' => 'A target is already assigned to this salesperson.'])
+            return back()->withErrors(['role_id' => 'A target is already assigned to this salesperson for this role.'])
                 ->withInput();
         }
 
-        Target::create($request->only('user_id', 'target_amount'));
+        Target::create($request->only('user_id', 'role_id', 'target_amount'));
 
         return redirect()->route('targets.index')->with('success', 'Target assigned successfully.');
     }
@@ -76,20 +82,22 @@ class TargetController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
+            'role_id' => 'required|exists:roles,id',
             'target_amount' => 'required|numeric|min:0.01',
         ]);
 
         // Enforce unique target except for this target record itself
         $exists = Target::where('user_id', $request->user_id)
+            ->where('role_id', $request->role_id)
             ->where('id', '!=', $target->id)
             ->exists();
 
         if ($exists) {
-            return back()->withErrors(['user_id' => 'A target is already assigned to this salesperson.'])
+            return back()->withErrors(['role_id' => 'A target is already assigned to this salesperson for this role.'])
                 ->withInput();
         }
 
-        $target->update($request->only('user_id', 'target_amount'));
+        $target->update($request->only('user_id', 'role_id', 'target_amount'));
 
         return redirect()->route('targets.index')->with('success', 'Target updated successfully.');
     }

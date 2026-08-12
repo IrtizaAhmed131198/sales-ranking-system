@@ -9,10 +9,15 @@ class Target extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'target_amount'];
+    protected $fillable = ['user_id', 'role_id', 'target_amount'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 }

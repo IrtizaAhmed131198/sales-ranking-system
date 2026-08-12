@@ -213,4 +213,10 @@ class UserController extends Controller
             ]
         ]);
     }
+
+    public function roles(User $user)
+    {
+        $roles = $user->roles()->select('roles.id', 'roles.name')->get();
+        return response()->json($roles);
+    }
 }

@@ -36,6 +36,16 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="role_id" class="form-label text-secondary small">Role</label>
+                    <select name="role_id" id="role_id" class="form-select @error('role_id') is-invalid @enderror" required disabled>
+                        <option value="">Select a user first...</option>
+                    </select>
+                    @error('role_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
                     <label for="amount" class="form-label text-secondary small">Sales Amount ($)</label>
                     <input type="number" step="0.01" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror" value="{{ old('amount') }}" required placeholder="e.g. 1500.00">
                     @error('amount')
@@ -96,6 +106,48 @@
             allowClear: true,
             minimumInputLength: 0
         });
+
+        $('#user_id').on('change', function() {
+            var userId = $(this).val();
+            var roleSelect = $('#role_id');
+            var oldRoleId = "{{ old('role_id') }}";
+            
+            roleSelect.html('<option value="">Loading...</option>');
+            roleSelect.prop('disabled', true);
+
+            if (userId) {
+                $.ajax({
+                    url: '/users/' + userId + '/roles',
+                    type: 'GET',
+                    success: function(data) {
+                        roleSelect.empty();
+                        if (data.length > 0) {
+                            if (data.length === 1 && !oldRoleId) {
+                                roleSelect.append('<option value="' + data[0].id + '" selected>' + data[0].name + '</option>');
+                            } else {
+                                roleSelect.append('<option value="">Select Role</option>');
+                                $.each(data, function(index, role) {
+                                    var selected = (oldRoleId == role.id || data.length === 1) ? 'selected' : '';
+                                    roleSelect.append('<option value="' + role.id + '" ' + selected + '>' + role.name + '</option>');
+                                });
+                            }
+                            roleSelect.prop('disabled', false);
+                        } else {
+                            roleSelect.append('<option value="">No roles found</option>');
+                        }
+                    },
+                    error: function() {
+                        roleSelect.html('<option value="">Error loading roles</option>');
+                    }
+                });
+            } else {
+                roleSelect.html('<option value="">Select a user first...</option>');
+            }
+        });
+
+        if ($('#user_id').val()) {
+            $('#user_id').trigger('change');
+        }
     });
 </script>
 @endsection

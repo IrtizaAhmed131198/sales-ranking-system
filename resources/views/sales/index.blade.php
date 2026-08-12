@@ -21,6 +21,7 @@
                                 <th style="width: 80px;">ID</th>
                                 <th>Salesperson Name</th>
                                 <th>Department</th>
+                                <th>Role</th>
                                 <th>Date</th>
                                 <th>Sales Amount</th>
                                 <th class="text-end" style="width: 150px;">Actions</th>
@@ -53,6 +54,12 @@
                             return '<span class="text-secondary small">' + data + '</span>';
                         }
                     },
+                    { data: 'role_name', name: 'role.name', orderable: false, render: function(data) {
+                        if (data !== 'N/A') {
+                            return '<span class="badge bg-info bg-opacity-20 text-white border border-info border-opacity-30 px-2.5 py-1.5">' + data + '</span>';
+                        }
+                        return '<span class="text-secondary small">' + data + '</span>';
+                    }},
                     { data: 'formatted_date', name: 'date' },
                     { data: 'formatted_amount', name: 'amount', className: 'fw-bold text-success' },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-end' }

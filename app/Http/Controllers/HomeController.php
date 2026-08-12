@@ -68,15 +68,16 @@ class HomeController extends Controller
                     ->whereHas('roles', function($q) use ($role) {
                         $q->where('roles.id', $role->id);
                     })
-                    ->with(['targets', 'sales' => function($q) use ($currentMonthStart, $currentMonthEnd) {
+                    ->with(['targets', 'sales' => function($q) use ($currentMonthStart, $currentMonthEnd, $role) {
                         $q->whereBetween('date', [$currentMonthStart, $currentMonthEnd])
-                          ->where('is_refunded', false);
+                          ->where('is_refunded', false)
+                          ->where('role_id', $role->id);
                     }, 'refunds' => function($q) use ($currentMonthStart) {
                         $q->where('refund_month', date('Y-m-01', strtotime($currentMonthStart)));
                     }, 'department', 'roles'])
                     ->get()
-                    ->map(function ($user) {
-                        $user->total_target = $user->targets->sum('target_amount');
+                    ->map(function ($user) use ($role) {
+                        $user->total_target = $user->targets->where('role_id', $role->id)->sum('target_amount');
                         $user->total_sales = $user->sales->sum('amount') - $user->refunds->sum('amount');
                         $user->performance_percentage = $user->total_target > 0
                             ? round(($user->total_sales / $user->total_target) * 100, 2)

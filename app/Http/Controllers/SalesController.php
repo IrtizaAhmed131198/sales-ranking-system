@@ -13,13 +13,16 @@ class SalesController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $sales = Sale::with('user.department')->select('sales.*');
+            $sales = Sale::with(['user.department', 'role'])->select('sales.*')->orderBy('date', 'desc');
             return DataTables::of($sales)
                 ->addColumn('user_name', function ($sale) {
                     return $sale->user ? $sale->user->name : 'N/A';
                 })
                 ->addColumn('department_name', function ($sale) {
                     return ($sale->user && $sale->user->department) ? $sale->user->department->name : 'No Department';
+                })
+                ->addColumn('role_name', function ($sale) {
+                    return $sale->role ? $sale->role->name : 'N/A';
                 })
                 ->addColumn('formatted_date', function ($sale) {
                     return date('M d, Y', strtotime($sale->date));
@@ -66,11 +69,12 @@ class SalesController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
+            'role_id' => 'required|exists:roles,id',
             'amount' => 'required|numeric|min:0.01',
             'date' => 'required|date',
         ]);
 
-        Sale::create($request->only('user_id', 'amount', 'date'));
+        Sale::create($request->only('user_id', 'role_id', 'amount', 'date'));
 
         event(new RankingUpdated());
 
@@ -87,11 +91,12 @@ class SalesController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
+            'role_id' => 'required|exists:roles,id',
             'amount' => 'required|numeric|min:0.01',
             'date' => 'required|date',
         ]);
 
-        $sale->update($request->only('user_id', 'amount', 'date'));
+        $sale->update($request->only('user_id', 'role_id', 'amount', 'date'));
 
 
 

@@ -21,6 +21,7 @@
                             <th style="width: 80px;">ID</th>
                             <th>Salesperson Name</th>
                             <th>Department</th>
+                            <th>Role</th>
                             <th>Target Amount</th>
                             <th class="text-end" style="width: 150px;">Actions</th>
                         </tr>
@@ -47,6 +48,12 @@
                 { data: 'department_name', name: 'user.department.name', orderable: false, render: function(data) {
                     if (data !== 'No Department') {
                         return '<span class="badge bg-primary bg-opacity-20 text-primary text-white border border-primary border-opacity-30 px-2.5 py-1.5">' + data + '</span>';
+                    }
+                    return '<span class="text-secondary small">' + data + '</span>';
+                }},
+                { data: 'role_name', name: 'role.name', orderable: false, render: function(data) {
+                    if (data !== 'N/A') {
+                        return '<span class="badge bg-info bg-opacity-20 text-white border border-info border-opacity-30 px-2.5 py-1.5">' + data + '</span>';
                     }
                     return '<span class="text-secondary small">' + data + '</span>';
                 }},
