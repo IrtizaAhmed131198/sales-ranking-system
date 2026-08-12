@@ -23,13 +23,15 @@ class HomeController extends Controller
             }, 'users.sales' => function ($q) use ($currentMonthStart, $currentMonthEnd) {
                 $q->whereBetween('date', [$currentMonthStart, $currentMonthEnd])
                   ->where('is_refunded', false);
+            }, 'users.refunds' => function ($q) use ($currentMonthStart) {
+                $q->where('refund_month', date('Y-m-01', strtotime($currentMonthStart)));
             }])->get()->map(function ($dept) {
                 $dept->total_sales_sum  = 0;
                 $dept->total_target_sum = (float) ($dept->target ?? 0);
 
                 foreach ($dept->users as $user) {
                     if (!$user->is_admin) {
-                        $user->total_sales = $user->sales->sum('amount');
+                        $user->total_sales = $user->sales->sum('amount') - $user->refunds->sum('amount');
                         $dept->total_sales_sum += $user->total_sales;
                     }
                 }
@@ -69,11 +71,13 @@ class HomeController extends Controller
                     ->with(['targets', 'sales' => function($q) use ($currentMonthStart, $currentMonthEnd) {
                         $q->whereBetween('date', [$currentMonthStart, $currentMonthEnd])
                           ->where('is_refunded', false);
+                    }, 'refunds' => function($q) use ($currentMonthStart) {
+                        $q->where('refund_month', date('Y-m-01', strtotime($currentMonthStart)));
                     }, 'department', 'roles'])
                     ->get()
                     ->map(function ($user) {
                         $user->total_target = $user->targets->sum('target_amount');
-                        $user->total_sales = $user->sales->sum('amount');
+                        $user->total_sales = $user->sales->sum('amount') - $user->refunds->sum('amount');
                         $user->performance_percentage = $user->total_target > 0
                             ? round(($user->total_sales / $user->total_target) * 100, 2)
                             : 0;
@@ -108,7 +112,7 @@ class HomeController extends Controller
 
         $prevDay = now()->subDay()->toDateString();
 
-        $getTopSeller = function ($startDate, $endDate, $label, $desc) {
+        $getTopSeller = function ($startDate, $endDate, $label, $desc, $isMonthly = false) {
             return User::where('is_admin', false)
                 ->where('is_active', true)
                 ->whereHas('sales', function ($q) use ($startDate, $endDate) {
@@ -117,11 +121,19 @@ class HomeController extends Controller
                 })
                 ->with(['targets', 'department', 'roles', 'sales' => function($q) {
                     $q->where('is_refunded', false);
+                }, 'refunds' => function($q) use ($startDate, $isMonthly) {
+                    if ($isMonthly) {
+                        $q->where('refund_month', date('Y-m-01', strtotime($startDate)));
+                    } else {
+                        $q->where('id', 0);
+                    }
                 }])
                 ->get()
-                ->map(function ($user) use ($startDate, $endDate) {
+                ->map(function ($user) use ($startDate, $endDate, $isMonthly) {
                     $user->total_target = $user->targets->sum('target_amount');
-                    $user->total_sales = $user->sales->whereBetween('date', [$startDate, $endDate])->sum('amount');
+                    $salesAmount = $user->sales->whereBetween('date', [$startDate, $endDate])->sum('amount');
+                    $refundsAmount = $isMonthly ? $user->refunds->sum('amount') : 0;
+                    $user->total_sales = $salesAmount - $refundsAmount;
                     $user->performance_percentage = $user->total_target > 0
                         ? round(($user->total_sales / $user->total_target) * 100, 2)
                         : 0;
@@ -139,7 +151,7 @@ class HomeController extends Controller
 
         $starPerformers = [];
 
-        $monthlyTop = $getTopSeller($prevMonthStart, $prevMonthEnd, 'Star Performer of the Month', 'PREVIOUS MONTH');
+        $monthlyTop = $getTopSeller($prevMonthStart, $prevMonthEnd, 'Star Performer of the Month', 'PREVIOUS MONTH', true);
         if ($monthlyTop) {
             $starPerformers[] = $monthlyTop;
         }
@@ -175,11 +187,13 @@ class HomeController extends Controller
         $completedUser = User::where('is_admin', false)->where('is_active', true)
             ->with(['targets', 'sales' => function($q) {
                 $q->where('is_refunded', false);
+            }, 'refunds' => function($q) {
+                $q->where('refund_month', date('Y-m-01'));
             }])
             ->get()
             ->map(function ($u) {
                 $u->total_target = $u->targets->sum('target_amount');
-                $u->total_sales = $u->sales->sum('amount');
+                $u->total_sales = $u->sales->sum('amount') - $u->refunds->sum('amount');
                 $u->performance_percentage = $u->total_target > 0
                     ? round(($u->total_sales / $u->total_target) * 100, 2) : 0;
                 $u->last_sale_date = optional($u->sales->sortByDesc('date')->first())->date;

@@ -17,26 +17,19 @@ class DashboardController extends Controller
 
         // 1. Fetch salespersons with their flat targets, and sum all their sales
         $query = User::where('is_admin', false)
-            ->join('targets', 'users.id', '=', 'targets.user_id')
-            ->leftJoin('sales', function($join) {
-                $join->on('users.id', '=', 'sales.user_id')
-                     ->where('sales.is_refunded', false);
-            })
-            ->select(
-                'users.id',
-                'users.name',
-                'users.image_path',
-                'users.department_id',
-                'targets.target_amount',
-                DB::raw('COALESCE(SUM(sales.amount), 0) as total_sales')
-            )
-            ->groupBy('users.id', 'users.name', 'users.image_path', 'users.department_id', 'targets.target_amount');
+            ->with(['targets', 'sales' => function($q) {
+                $q->where('is_refunded', false);
+            }, 'refunds']);
 
         if ($selectedDeptId) {
-            $query->where('users.department_id', $selectedDeptId);
+            $query->where('department_id', $selectedDeptId);
         }
 
-        $salespersons = $query->get();
+        $salespersons = $query->get()->map(function ($user) {
+            $user->target_amount = $user->targets->sum('target_amount');
+            $user->total_sales = $user->sales->sum('amount') - $user->refunds->sum('amount');
+            return $user;
+        });
 
         // 2. Compute performance percentage and sort descending
         $ranked = $salespersons->map(function ($sp) {

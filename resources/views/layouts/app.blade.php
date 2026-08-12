@@ -444,6 +444,13 @@
                 </a>
             </li>
             <li class="sidebar-item">
+                <a href="{{ route('refunds.index') }}"
+                    class="sidebar-link {{ request()->is('refunds*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                    <span>Monthly Refunds</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
                 <a href="{{ route('benchmarks.index') }}"
                     class="sidebar-link {{ request()->is('benchmarks*') ? 'active' : '' }}">
                     <i class="fa-solid fa-gauge-high"></i>

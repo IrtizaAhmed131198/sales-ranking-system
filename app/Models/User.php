@@ -42,6 +42,11 @@ class User extends Authenticatable
         return $this->hasMany(Sale::class);
     }
 
+    public function refunds()
+    {
+        return $this->hasMany(Refund::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\TargetController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\RefundController;
 
 use App\Http\Controllers\BenchmarkController;
 use App\Http\Controllers\RoleController;
@@ -33,6 +34,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('targets', TargetController::class);
     Route::resource('sales', SalesController::class);
     Route::post('sales/{sale}/refund', [SalesController::class, 'refund'])->name('sales.refund');
+    Route::resource('refunds', RefundController::class);
     Route::resource('benchmarks', BenchmarkController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('notices', NoticeController::class);
