@@ -208,14 +208,14 @@ class HomeController extends Controller
             ? "🎯 Target Completed by {$completedUser->name}!"
             : "No targets completed yet.";
 
-        // Current #1 Top Performer — leaderboard se seedha nikal lo (already sorted desc)
+        // Current #1 Top Performer — Overall highest sales for the current month
         $topPerformerText = "No top performer yet.";
-        if (!empty($leaderboards)) {
-            $firstTable = $leaderboards[0]['tables'][0] ?? null;
-            $leader = $firstTable['salespersons'][0] ?? null;
-            if ($leader) {
-                $topPerformerText = "🌟 Current Top Performer: {$leader->name}!";
-            }
+        $overallTopPerformer = $departments->flatMap(function($dept) {
+            return $dept->users->where('is_admin', false);
+        })->sortByDesc('total_sales')->first();
+
+        if ($overallTopPerformer) {
+            $topPerformerText = "🌟 Current Top Performer: {$overallTopPerformer->name}!";
         }
 
         // Current #1 Department — departments already sortByDesc('dept_performance_percentage')
